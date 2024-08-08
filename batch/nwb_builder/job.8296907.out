@@ -1,0 +1,518 @@
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240306_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240306_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_002
+integrate no sort neural data
+
+Hub1-20240307_interception002.ns6 opened
+
+Hub1-20240307_interception002.ns6 closed
+0it [00:00, ?it/s]
+0it [00:00, ?it/s][A
+1it [00:03,  3.93s/it][A
+2it [00:08,  4.13s/it][A
+3it [00:12,  4.07s/it][A
+4it [00:16,  3.97s/it][A
+5it [00:20,  3.99s/it][A
+6it [00:24,  4.08s/it][A
+7it [00:28,  3.99s/it][A
+8it [00:32,  3.98s/it][A
+9it [00:36,  4.11s/it][A
+10it [00:40,  4.18s/it][A
+11it [00:45,  4.20s/it][A
+12it [00:49,  4.21s/it][A
+13it [00:53,  4.34s/it][A
+14it [00:58,  4.36s/it][A
+15it [01:02,  4.43s/it][A
+16it [01:07,  4.37s/it][A
+17it [01:11,  4.28s/it][A
+18it [01:15,  4.31s/it][A
+19it [01:19,  4.27s/it][A
+20it [01:23,  4.16s/it][A
+21it [01:27,  4.14s/it][A
+22it [01:31,  4.16s/it][A
+23it [01:35,  4.12s/it][A
+24it [01:39,  4.01s/it][A
+25it [01:43,  3.98s/it][A
+26it [01:47,  4.07s/it][A
+27it [01:52,  4.10s/it][A
+28it [01:55,  4.02s/it][A
+29it [02:00,  4.11s/it][A
+30it [02:04,  4.12s/it][A
+31it [02:08,  4.17s/it][A
+32it [02:12,  4.16s/it][A
+33it [02:17,  4.19s/it][A
+34it [02:21,  4.14s/it][A
+35it [02:25,  4.14s/it][A
+36it [02:29,  4.18s/it][A
+37it [02:33,  4.21s/it][A
+38it [02:37,  4.19s/it][A
+39it [02:42,  4.18s/it][A
+40it [02:46,  4.16s/it][A
+41it [02:50,  4.12s/it][A
+42it [02:54,  4.11s/it][A
+43it [02:58,  4.03s/it][A
+44it [03:02,  4.07s/it][A
+45it [03:06,  4.08s/it][A
+46it [03:10,  4.18s/it][A
+47it [03:14,  4.15s/it][A
+48it [03:19,  4.23s/it][A
+49it [03:23,  4.31s/it][A
+50it [03:28,  4.32s/it][A
+51it [03:32,  4.39s/it][A
+52it [03:36,  4.33s/it][A
+53it [03:41,  4.28s/it][A
+54it [03:45,  4.28s/it][A
+55it [03:49,  4.31s/it][A
+56it [03:53,  4.28s/it][A
+57it [03:57,  4.17s/it][A
+58it [04:02,  4.18s/it][A
+59it [04:06,  4.26s/it][A
+60it [04:10,  4.22s/it][A
+61it [04:14,  4.21s/it][A
+62it [04:19,  4.21s/it][A
+63it [04:23,  4.18s/it][A
+64it [04:27,  4.13s/it][A
+65it [04:31,  4.07s/it][A
+66it [04:35,  4.13s/it][A
+67it [04:39,  4.16s/it][A
+68it [04:43,  4.15s/it][A
+69it [04:48,  4.27s/it][A
+70it [04:52,  4.34s/it][A
+71it [04:57,  4.31s/it][A
+72it [05:02,  4.54s/it][A
+73it [05:06,  4.53s/it][A
+74it [05:11,  4.51s/it][A
+75it [05:15,  4.44s/it][A
+76it [05:19,  4.29s/it][A
+77it [05:22,  4.10s/it][A
+78it [05:26,  4.05s/it][A
+79it [05:31,  4.07s/it][A
+80it [05:34,  4.02s/it][A
+81it [05:38,  4.01s/it][A
+82it [05:43,  4.09s/it][A
+83it [05:47,  4.22s/it][A
+84it [05:52,  4.25s/it][A
+85it [05:56,  4.31s/it][A
+86it [06:00,  4.29s/it][A
+87it [06:05,  4.30s/it][A
+88it [06:09,  4.23s/it][A
+89it [06:13,  4.27s/it][A
+90it [06:17,  4.24s/it][A
+91it [06:21,  4.13s/it][A
+92it [06:25,  4.10s/it][A
+93it [06:29,  4.19s/it][A
+94it [06:34,  4.20s/it][A
+95it [06:38,  4.13s/it][A
+96it [06:42,  4.06s/it][A96it [06:42,  4.19s/it]
+1it [06:42, 402.03s/it]
+0it [00:00, ?it/s][A
+1it [00:04,  4.24s/it][A
+2it [00:08,  4.21s/it][A
+3it [00:12,  4.10s/it][A
+4it [00:16,  4.17s/it][A
+5it [00:21,  4.26s/it][A
+6it [00:25,  4.37s/it][A
+7it [00:29,  4.33s/it][A
+8it [00:34,  4.26s/it][A
+9it [00:38,  4.26s/it][A
+10it [00:42,  4.17s/it][A
+11it [00:46,  4.15s/it][A
+12it [00:50,  4.17s/it][A
+13it [00:54,  4.18s/it][A
+14it [00:59,  4.20s/it][A
+15it [01:03,  4.22s/it][A
+16it [01:07,  4.22s/it][A
+17it [01:11,  4.16s/it][A
+18it [01:15,  4.17s/it][A
+19it [01:19,  4.17s/it][A
+20it [01:24,  4.19s/it][A
+21it [01:28,  4.11s/it][A
+22it [01:32,  4.14s/it][A
+23it [01:36,  4.18s/it][A
+24it [01:40,  4.20s/it][A
+25it [01:44,  4.17s/it][A
+26it [01:49,  4.15s/it][A
+27it [01:53,  4.16s/it][A
+28it [01:57,  4.11s/it][A
+29it [02:01,  4.11s/it][A
+30it [02:05,  4.12s/it][A
+31it [02:09,  4.17s/it][A
+32it [02:13,  4.14s/it][A
+33it [02:17,  4.09s/it][A
+34it [02:22,  4.20s/it][A
+35it [02:26,  4.18s/it][A
+36it [02:30,  4.17s/it][A
+37it [02:34,  4.11s/it][A
+38it [02:38,  4.11s/it][A
+39it [02:42,  4.09s/it][A
+40it [02:47,  4.19s/it][A
+41it [02:51,  4.17s/it][A
+42it [02:55,  4.16s/it][A
+43it [02:59,  4.15s/it][A
+44it [03:03,  4.18s/it][A
+45it [03:07,  4.08s/it][A
+46it [03:12,  4.27s/it][A
+47it [03:16,  4.16s/it][A
+48it [03:20,  4.09s/it][A
+49it [03:24,  4.17s/it][A
+50it [03:28,  4.15s/it][A
+51it [03:32,  4.14s/it][A
+52it [03:36,  4.20s/it][A
+53it [03:41,  4.25s/it][A
+54it [03:45,  4.32s/it][A
+55it [03:50,  4.33s/it][A
+56it [03:54,  4.29s/it][A
+57it [03:58,  4.15s/it][A
+58it [04:02,  4.16s/it][A
+59it [04:06,  4.12s/it][A
+60it [04:10,  4.12s/it][A
+61it [04:14,  4.08s/it][A
+62it [04:18,  4.08s/it][A
+63it [04:22,  4.08s/it][A
+64it [04:27,  4.20s/it][A
+65it [04:31,  4.19s/it][A
+66it [04:35,  4.15s/it][A
+67it [04:39,  4.23s/it][A
+68it [04:44,  4.29s/it][A
+69it [04:48,  4.35s/it][A
+70it [04:52,  4.23s/it][A
+71it [04:56,  4.15s/it][A
+72it [05:00,  4.13s/it][A
+73it [05:04,  4.09s/it][A
+74it [05:08,  4.04s/it][A
+75it [05:12,  4.07s/it][A
+76it [05:16,  4.07s/it][A
+77it [05:21,  4.11s/it][A
+78it [05:25,  4.19s/it][A
+79it [05:29,  4.29s/it][A
+80it [05:33,  4.21s/it][A
+81it [05:37,  4.14s/it][A
+82it [05:42,  4.23s/it][A
+83it [05:46,  4.29s/it][A
+84it [05:51,  4.29s/it][A
+85it [05:55,  4.18s/it][A
+86it [05:58,  4.10s/it][A
+87it [06:03,  4.19s/it][A
+88it [06:07,  4.24s/it][A
+89it [06:11,  4.22s/it][A
+90it [06:16,  4.19s/it][A
+91it [06:20,  4.29s/it][A
+92it [06:25,  4.36s/it][A
+93it [06:29,  4.30s/it][A
+94it [06:33,  4.25s/it][A
+95it [06:37,  4.24s/it][A
+96it [06:41,  4.26s/it][A96it [06:41,  4.19s/it]
+2it [13:23, 401.95s/it]2it [13:23, 401.96s/it]
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/pynwb/file.py:471: UserWarning: Date is missing timezone information. Updating to local timezone.
+  args_to_set['session_start_time'] = _add_missing_timezone(session_start_time)
+
+NSP-20240307_interception002.nev opened
+
+NSP-20240307_interception002.nev closed
+integrate neural data
+
+Hub1-20240307_interception002.ns6 opened
+
+Hub1-20240307_interception002.ns6 closed
+  0%|          | 0/84 [00:00<?, ?it/s]  1%|          | 1/84 [00:01<01:52,  1.35s/it]  6%|▌         | 5/84 [00:02<00:37,  2.10it/s] 17%|█▋        | 14/84 [00:03<00:16,  4.29it/s] 19%|█▉        | 16/84 [00:05<00:21,  3.20it/s] 20%|██        | 17/84 [00:06<00:28,  2.34it/s] 23%|██▎       | 19/84 [00:07<00:32,  2.03it/s] 31%|███       | 26/84 [00:09<00:18,  3.08it/s] 33%|███▎      | 28/84 [00:10<00:21,  2.55it/s] 36%|███▌      | 30/84 [00:11<00:23,  2.25it/s] 39%|███▉      | 33/84 [00:13<00:22,  2.28it/s] 46%|████▋     | 39/84 [00:14<00:15,  2.97it/s] 51%|█████     | 43/84 [00:15<00:13,  2.99it/s] 52%|█████▏    | 44/84 [00:17<00:17,  2.30it/s] 55%|█████▍    | 46/84 [00:18<00:18,  2.06it/s] 68%|██████▊   | 57/84 [00:19<00:06,  3.90it/s] 69%|██████▉   | 58/84 [00:21<00:08,  2.98it/s] 76%|███████▌  | 64/84 [00:22<00:05,  3.47it/s] 82%|████████▏ | 69/84 [00:23<00:04,  3.56it/s] 92%|█████████▏| 77/84 [00:25<00:01,  4.35it/s] 93%|█████████▎| 78/84 [00:26<00:01,  3.25it/s] 94%|█████████▍| 79/84 [00:27<00:02,  2.49it/s] 96%|█████████▋| 81/84 [00:29<00:01,  2.19it/s] 98%|█████████▊| 82/84 [00:30<00:01,  1.73it/s] 99%|█████████▉| 83/84 [00:31<00:00,  1.43it/s]100%|██████████| 84/84 [00:31<00:00,  2.64it/s]
+  0%|          | 0/142 [00:00<?, ?it/s]  2%|▏         | 3/142 [00:01<01:02,  2.24it/s]  4%|▎         | 5/142 [00:02<01:16,  1.78it/s]  6%|▌         | 8/142 [00:03<01:06,  2.02it/s]  8%|▊         | 12/142 [00:05<00:54,  2.38it/s]  9%|▉         | 13/142 [00:06<01:12,  1.79it/s] 10%|▉         | 14/142 [00:08<01:31,  1.41it/s] 11%|█         | 15/142 [00:09<01:48,  1.17it/s] 15%|█▌        | 22/142 [00:10<00:49,  2.40it/s] 16%|█▌        | 23/142 [00:12<01:02,  1.91it/s] 17%|█▋        | 24/142 [00:13<01:15,  1.57it/s] 18%|█▊        | 26/142 [00:14<01:15,  1.54it/s] 19%|█▉        | 27/142 [00:16<01:29,  1.28it/s] 27%|██▋       | 38/142 [00:17<00:30,  3.36it/s] 28%|██▊       | 40/142 [00:18<00:36,  2.83it/s] 37%|███▋      | 53/142 [00:20<00:18,  4.86it/s] 42%|████▏     | 59/142 [00:21<00:17,  4.72it/s] 43%|████▎     | 61/142 [00:23<00:21,  3.75it/s] 44%|████▍     | 63/142 [00:24<00:26,  2.98it/s] 52%|█████▏    | 74/142 [00:25<00:15,  4.53it/s] 65%|██████▌   | 93/142 [00:27<00:06,  7.38it/s] 66%|██████▌   | 94/142 [00:28<00:08,  5.47it/s] 72%|███████▏  | 102/142 [00:29<00:07,  5.50it/s] 74%|███████▍  | 105/142 [00:31<00:08,  4.57it/s] 75%|███████▌  | 107/142 [00:32<00:09,  3.67it/s] 76%|███████▌  | 108/142 [00:33<00:12,  2.81it/s] 77%|███████▋  | 110/142 [00:35<00:13,  2.41it/s] 78%|███████▊  | 111/142 [00:36<00:16,  1.89it/s] 79%|███████▉  | 112/142 [00:37<00:19,  1.55it/s] 80%|███████▉  | 113/142 [00:39<00:22,  1.31it/s] 81%|████████  | 115/142 [00:40<00:19,  1.37it/s] 82%|████████▏ | 116/142 [00:41<00:22,  1.18it/s] 82%|████████▏ | 117/142 [00:43<00:23,  1.05it/s] 87%|████████▋ | 123/142 [00:44<00:09,  2.07it/s] 87%|████████▋ | 124/142 [00:45<00:10,  1.69it/s] 89%|████████▉ | 127/142 [00:47<00:08,  1.85it/s] 90%|█████████ | 128/142 [00:48<00:09,  1.51it/s] 96%|█████████▋| 137/142 [00:50<00:01,  3.06it/s] 99%|█████████▉| 141/142 [00:51<00:00,  3.04it/s]100%|██████████| 142/142 [00:51<00:00,  2.77it/s]
+0it [00:00, ?it/s]1it [00:03,  3.92s/it]2it [00:08,  4.11s/it]3it [00:12,  4.00s/it]4it [00:15,  3.93s/it]5it [00:19,  3.96s/it]6it [00:24,  4.06s/it]7it [00:27,  3.97s/it]8it [00:31,  3.96s/it]9it [00:36,  4.11s/it]10it [00:40,  4.20s/it]11it [00:44,  4.22s/it]12it [00:49,  4.22s/it]13it [00:53,  4.36s/it]14it [00:58,  4.37s/it]15it [01:02,  4.44s/it]16it [01:07,  4.38s/it]17it [01:11,  4.29s/it]18it [01:15,  4.31s/it]19it [01:19,  4.27s/it]20it [01:23,  4.16s/it]21it [01:27,  4.14s/it]22it [01:31,  4.16s/it]23it [01:35,  4.12s/it]24it [01:39,  4.01s/it]25it [01:43,  3.99s/it]26it [01:47,  4.07s/it]27it [01:52,  4.09s/it]28it [01:55,  4.02s/it]29it [02:00,  4.10s/it]30it [02:04,  4.12s/it]31it [02:08,  4.17s/it]32it [02:12,  4.16s/it]33it [02:16,  4.18s/it]34it [02:20,  4.14s/it]35it [02:25,  4.14s/it]36it [02:29,  4.17s/it]37it [02:33,  4.18s/it]38it [02:37,  4.17s/it]39it [02:41,  4.17s/it]40it [02:45,  4.15s/it]41it [02:50,  4.12s/it]42it [02:54,  4.12s/it]43it [02:57,  4.03s/it]44it [03:02,  4.07s/it]45it [03:06,  4.08s/it]46it [03:10,  4.18s/it]47it [03:14,  4.15s/it]48it [03:19,  4.23s/it]49it [03:23,  4.29s/it]50it [03:27,  4.31s/it]51it [03:32,  4.38s/it]52it [03:36,  4.32s/it]53it [03:40,  4.28s/it]54it [03:45,  4.29s/it]55it [03:49,  4.34s/it]56it [03:53,  4.30s/it]57it [03:57,  4.18s/it]58it [04:01,  4.20s/it]59it [04:06,  4.27s/it]60it [04:10,  4.23s/it]61it [04:14,  4.23s/it]62it [04:18,  4.22s/it]63it [04:23,  4.19s/it]64it [04:27,  4.16s/it]65it [04:31,  4.09s/it]66it [04:35,  4.14s/it]67it [04:39,  4.17s/it]68it [04:43,  4.17s/it]69it [04:48,  4.28s/it]70it [04:52,  4.35s/it]71it [04:57,  4.35s/it]72it [05:02,  4.56s/it]73it [05:06,  4.55s/it]74it [05:11,  4.53s/it]75it [05:15,  4.46s/it]76it [05:19,  4.31s/it]77it [05:23,  4.11s/it]78it [05:27,  4.06s/it]79it [05:31,  4.08s/it]80it [05:35,  4.05s/it]81it [05:39,  4.03s/it]82it [05:43,  4.11s/it]83it [05:47,  4.23s/it]84it [05:52,  4.26s/it]85it [05:56,  4.32s/it]86it [06:01,  4.30s/it]87it [06:05,  4.30s/it]88it [06:09,  4.23s/it]89it [06:13,  4.27s/it]90it [06:17,  4.24s/it]91it [06:21,  4.15s/it]92it [06:25,  4.12s/it]93it [06:30,  4.21s/it]94it [06:34,  4.21s/it]95it [06:38,  4.13s/it]96it [06:42,  4.06s/it]96it [06:42,  4.19s/it]
+0it [00:00, ?it/s]1it [00:04,  4.23s/it]2it [00:08,  4.22s/it]3it [00:12,  4.10s/it]4it [00:16,  4.16s/it]5it [00:21,  4.25s/it]6it [00:25,  4.36s/it]7it [00:29,  4.33s/it]8it [00:34,  4.27s/it]9it [00:38,  4.27s/it]10it [00:42,  4.19s/it]11it [00:46,  4.17s/it]12it [00:50,  4.19s/it]13it [00:54,  4.20s/it]14it [00:59,  4.22s/it]15it [01:03,  4.24s/it]16it [01:07,  4.24s/it]17it [01:11,  4.18s/it]18it [01:15,  4.19s/it]19it [01:20,  4.17s/it]20it [01:24,  4.18s/it]21it [01:28,  4.10s/it]22it [01:32,  4.13s/it]23it [01:36,  4.18s/it]24it [01:40,  4.19s/it]25it [01:45,  4.17s/it]26it [01:49,  4.15s/it]27it [01:53,  4.14s/it]28it [01:57,  4.09s/it]29it [02:01,  4.10s/it]30it [02:05,  4.12s/it]31it [02:09,  4.16s/it]32it [02:13,  4.13s/it]33it [02:17,  4.08s/it]34it [02:22,  4.19s/it]35it [02:26,  4.17s/it]36it [02:30,  4.16s/it]37it [02:34,  4.11s/it]38it [02:38,  4.10s/it]39it [02:42,  4.08s/it]40it [02:47,  4.18s/it]41it [02:51,  4.17s/it]42it [02:55,  4.16s/it]43it [02:59,  4.14s/it]44it [03:03,  4.17s/it]45it [03:07,  4.08s/it]46it [03:12,  4.27s/it]47it [03:16,  4.15s/it]48it [03:20,  4.08s/it]49it [03:24,  4.14s/it]50it [03:28,  4.13s/it]51it [03:32,  4.12s/it]52it [03:36,  4.18s/it]53it [03:41,  4.23s/it]54it [03:45,  4.30s/it]55it [03:50,  4.31s/it]56it [03:54,  4.27s/it]57it [03:58,  4.15s/it]58it [04:02,  4.14s/it]59it [04:06,  4.11s/it]60it [04:10,  4.11s/it]61it [04:14,  4.09s/it]62it [04:18,  4.10s/it]63it [04:22,  4.09s/it]64it [04:27,  4.21s/it]65it [04:31,  4.20s/it]66it [04:35,  4.15s/it]67it [04:39,  4.24s/it]68it [04:44,  4.29s/it]69it [04:48,  4.35s/it]70it [04:52,  4.23s/it]71it [04:56,  4.15s/it]72it [05:00,  4.13s/it]73it [05:04,  4.09s/it]74it [05:08,  4.03s/it]75it [05:12,  4.07s/it]76it [05:16,  4.07s/it]77it [05:20,  4.10s/it]78it [05:25,  4.17s/it]79it [05:29,  4.24s/it]80it [05:33,  4.18s/it]81it [05:37,  4.12s/it]82it [05:42,  4.21s/it]83it [05:46,  4.24s/it]84it [05:50,  4.25s/it]85it [05:54,  4.14s/it]86it [05:58,  4.08s/it]87it [06:02,  4.17s/it]88it [06:07,  4.22s/it]89it [06:11,  4.21s/it]90it [06:15,  4.19s/it]91it [06:19,  4.28s/it]92it [06:24,  4.35s/it]93it [06:28,  4.29s/it]94it [06:32,  4.24s/it]95it [06:37,  4.24s/it]96it [06:41,  4.26s/it]96it [06:41,  4.18s/it]
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/pynwb/file.py:471: UserWarning: Date is missing timezone information. Updating to local timezone.
+  args_to_set['session_start_time'] = _add_missing_timezone(session_start_time)
+
+Hub1-20240307_interception002.ns2 opened
+
+Hub1-20240307_interception002.ns2 closed
+
+NSP-20240307_interception002.nev opened
+
+NSP-20240307_interception002.nev closed
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240308_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240308_BrUtahInterception120SemiBc_002
+integrate no sort neural data
+
+Hub1-20240308_interception002.ns6 opened
+
+Hub1-20240308_interception002.ns6 closed
+0it [00:00, ?it/s]
+0it [00:00, ?it/s][A
+1it [00:03,  3.90s/it][A
+2it [00:07,  3.76s/it][A
+3it [00:11,  3.72s/it][A
+4it [00:14,  3.67s/it][A
+5it [00:18,  3.77s/it][A
+6it [00:22,  3.71s/it][A
+7it [00:25,  3.65s/it][A
+8it [00:29,  3.65s/it][A
+9it [00:33,  3.65s/it][A
+10it [00:36,  3.66s/it][A
+11it [00:40,  3.66s/it][A
+12it [00:44,  3.67s/it][A
+13it [00:47,  3.63s/it][A
+14it [00:51,  3.64s/it][A
+15it [00:54,  3.62s/it][A
+16it [00:58,  3.63s/it][A
+17it [01:02,  3.70s/it][A
+18it [01:06,  3.70s/it][A
+19it [01:09,  3.68s/it][A
+20it [01:13,  3.64s/it][A
+21it [01:17,  3.74s/it][A
+22it [01:20,  3.67s/it][A
+23it [01:24,  3.63s/it][A
+24it [01:27,  3.61s/it][A
+25it [01:31,  3.60s/it][A
+26it [01:35,  3.62s/it][A
+27it [01:38,  3.64s/it][A
+28it [01:42,  3.66s/it][A
+29it [01:46,  3.63s/it][A
+30it [01:49,  3.67s/it][A
+31it [01:53,  3.68s/it][A
+32it [01:57,  3.63s/it][A
+33it [02:00,  3.59s/it][A
+34it [02:04,  3.69s/it][A
+35it [02:08,  3.70s/it][A
+36it [02:11,  3.70s/it][A
+37it [02:15,  3.71s/it][A
+38it [02:19,  3.68s/it][A
+39it [02:23,  3.70s/it][A
+40it [02:26,  3.61s/it][A
+41it [02:30,  3.65s/it][A
+42it [02:33,  3.59s/it][A
+43it [02:37,  3.68s/it][A
+44it [02:41,  3.65s/it][A
+45it [02:44,  3.55s/it][A
+46it [02:47,  3.53s/it][A
+47it [02:51,  3.62s/it][A
+48it [02:55,  3.58s/it][A
+49it [02:58,  3.62s/it][A
+50it [03:02,  3.66s/it][A
+51it [03:06,  3.67s/it][A
+52it [03:09,  3.61s/it][A
+53it [03:13,  3.61s/it][A
+54it [03:17,  3.64s/it][A
+55it [03:20,  3.68s/it][A
+56it [03:24,  3.59s/it][A
+57it [03:27,  3.55s/it][A
+58it [03:31,  3.58s/it][A
+59it [03:34,  3.57s/it][A
+60it [03:38,  3.53s/it][A
+61it [03:41,  3.49s/it][A
+62it [03:45,  3.46s/it][A
+63it [03:48,  3.42s/it][A
+64it [03:52,  3.47s/it][A
+65it [03:55,  3.52s/it][A
+66it [03:59,  3.57s/it][A
+67it [04:03,  3.64s/it][A
+68it [04:06,  3.63s/it][A
+69it [04:10,  3.63s/it][A
+70it [04:14,  3.69s/it][A
+71it [04:18,  3.79s/it][A
+72it [04:22,  4.00s/it][A
+73it [04:26,  3.99s/it][A
+74it [04:30,  3.90s/it][A
+75it [04:33,  3.75s/it][A
+76it [04:37,  3.63s/it][A
+77it [04:40,  3.63s/it][A
+78it [04:44,  3.61s/it][A
+79it [04:48,  3.66s/it][A
+80it [04:51,  3.65s/it][A
+81it [04:55,  3.64s/it][A
+82it [04:58,  3.58s/it][A
+83it [05:02,  3.68s/it][A
+84it [05:06,  3.64s/it][A
+85it [05:09,  3.64s/it][A
+86it [05:13,  3.65s/it][A
+87it [05:17,  3.77s/it][A
+88it [05:21,  3.77s/it][A
+89it [05:25,  3.77s/it][A
+90it [05:28,  3.77s/it][A
+91it [05:33,  3.84s/it][A
+92it [05:36,  3.72s/it][A
+93it [05:40,  3.71s/it][A
+94it [05:43,  3.65s/it][A
+95it [05:47,  3.62s/it][A
+96it [05:51,  3.77s/it][A96it [05:51,  3.66s/it]
+1it [05:51, 351.32s/it]
+0it [00:00, ?it/s][A
+1it [00:03,  3.68s/it][A
+2it [00:07,  3.65s/it][A
+3it [00:11,  3.81s/it][A
+4it [00:15,  3.80s/it][A
+5it [00:18,  3.79s/it][A
+6it [00:22,  3.71s/it][A
+7it [00:25,  3.61s/it][A
+8it [00:29,  3.63s/it][A
+9it [00:32,  3.53s/it][A
+10it [00:36,  3.52s/it][A
+11it [00:39,  3.56s/it][A
+12it [00:43,  3.68s/it][A
+13it [00:47,  3.68s/it][A
+14it [00:51,  3.69s/it][A
+15it [00:54,  3.69s/it][A
+16it [00:59,  3.84s/it][A
+17it [01:02,  3.82s/it][A
+18it [01:06,  3.70s/it][A
+19it [01:10,  3.75s/it][A
+20it [01:13,  3.72s/it][A
+21it [01:17,  3.76s/it][A
+22it [01:21,  3.71s/it][A
+23it [01:25,  3.79s/it][A
+24it [01:29,  3.82s/it][A
+25it [01:32,  3.80s/it][A
+26it [01:36,  3.74s/it][A
+27it [01:40,  3.71s/it][A
+28it [01:43,  3.71s/it][A
+29it [01:47,  3.64s/it][A
+30it [01:50,  3.62s/it][A
+31it [01:54,  3.61s/it][A
+32it [01:58,  3.58s/it][A
+33it [02:01,  3.47s/it][A
+34it [02:04,  3.55s/it][A
+35it [02:08,  3.64s/it][A
+36it [02:12,  3.67s/it][A
+37it [02:16,  3.61s/it][A
+38it [02:19,  3.71s/it][A
+39it [02:23,  3.77s/it][A
+40it [02:27,  3.77s/it][A
+41it [02:31,  3.72s/it][A
+42it [02:34,  3.69s/it][A
+43it [02:38,  3.68s/it][A
+44it [02:42,  3.64s/it][A
+45it [02:45,  3.68s/it][A
+46it [02:49,  3.75s/it][A
+47it [02:53,  3.79s/it][A
+48it [02:57,  3.75s/it][A
+49it [03:01,  3.77s/it][A
+50it [03:04,  3.70s/it][A
+51it [03:08,  3.72s/it][A
+52it [03:11,  3.64s/it][A
+53it [03:15,  3.66s/it][A
+54it [03:19,  3.62s/it][A
+55it [03:22,  3.69s/it][A
+56it [03:26,  3.68s/it][A
+57it [03:30,  3.77s/it][A
+58it [03:34,  3.69s/it][A
+59it [03:37,  3.67s/it][A
+60it [03:41,  3.59s/it][A
+61it [03:44,  3.56s/it][A
+62it [03:48,  3.53s/it][A
+63it [03:51,  3.53s/it][A
+64it [03:55,  3.57s/it][A
+65it [03:58,  3.56s/it][A
+66it [04:02,  3.53s/it][A
+67it [04:05,  3.51s/it][A
+68it [04:09,  3.62s/it][A
+69it [04:13,  3.61s/it][A
+70it [04:16,  3.60s/it][A
+71it [04:20,  3.65s/it][A
+72it [04:24,  3.69s/it][A
+73it [04:27,  3.68s/it][A
+74it [04:31,  3.69s/it][A
+75it [04:35,  3.62s/it][A
+76it [04:38,  3.69s/it][A
+77it [04:42,  3.66s/it][A
+78it [04:46,  3.60s/it][A
+79it [04:49,  3.55s/it][A
+80it [04:53,  3.64s/it][A
+81it [04:56,  3.60s/it][A
+82it [05:00,  3.61s/it][A
+83it [05:04,  3.63s/it][A
+84it [05:07,  3.57s/it][A
+85it [05:11,  3.64s/it][A
+86it [05:14,  3.49s/it][A
+87it [05:18,  3.53s/it][A
+88it [05:21,  3.56s/it][A
+89it [05:25,  3.65s/it][A
+90it [05:29,  3.58s/it][A
+91it [05:32,  3.58s/it][A
+92it [05:36,  3.61s/it][A
+93it [05:40,  3.74s/it][A
+94it [05:43,  3.67s/it][A
+95it [05:47,  3.64s/it][A
+96it [05:51,  3.76s/it][A96it [05:51,  3.66s/it]
+2it [11:42, 351.40s/it]2it [11:42, 351.39s/it]
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/pynwb/file.py:471: UserWarning: Date is missing timezone information. Updating to local timezone.
+  args_to_set['session_start_time'] = _add_missing_timezone(session_start_time)
+
+NSP-20240308_interception002.nev opened
+
+NSP-20240308_interception002.nev closed
+integrate neural data
+
+Hub1-20240308_interception002.ns6 opened
+
+Hub1-20240308_interception002.ns6 closed
+  0%|          | 0/88 [00:00<?, ?it/s]  1%|          | 1/88 [00:01<02:14,  1.55s/it] 19%|█▉        | 17/88 [00:02<00:09,  7.50it/s] 20%|██        | 18/88 [00:03<00:15,  4.59it/s] 25%|██▌       | 22/88 [00:05<00:15,  4.16it/s] 26%|██▌       | 23/88 [00:06<00:21,  3.01it/s] 27%|██▋       | 24/88 [00:07<00:27,  2.30it/s] 31%|███       | 27/88 [00:08<00:25,  2.41it/s] 34%|███▍      | 30/88 [00:09<00:23,  2.47it/s] 36%|███▋      | 32/88 [00:10<00:24,  2.24it/s] 40%|███▉      | 35/88 [00:11<00:22,  2.37it/s] 41%|████      | 36/88 [00:13<00:27,  1.91it/s] 42%|████▏     | 37/88 [00:14<00:32,  1.59it/s] 45%|████▌     | 40/88 [00:15<00:25,  1.88it/s] 47%|████▋     | 41/88 [00:16<00:30,  1.54it/s] 50%|█████     | 44/88 [00:17<00:23,  1.87it/s] 51%|█████     | 45/88 [00:18<00:27,  1.58it/s] 55%|█████▍    | 48/88 [00:20<00:21,  1.87it/s] 58%|█████▊    | 51/88 [00:21<00:17,  2.06it/s] 73%|███████▎  | 64/88 [00:22<00:04,  4.80it/s] 74%|███████▍  | 65/88 [00:23<00:06,  3.60it/s] 81%|████████  | 71/88 [00:24<00:04,  4.10it/s] 83%|████████▎ | 73/88 [00:25<00:04,  3.43it/s] 89%|████████▊ | 78/88 [00:27<00:02,  3.74it/s] 92%|█████████▏| 81/88 [00:28<00:02,  3.43it/s]100%|██████████| 88/88 [00:28<00:00,  3.13it/s]
+  0%|          | 0/153 [00:00<?, ?it/s]  1%|          | 1/153 [00:01<03:08,  1.24s/it]  3%|▎         | 5/153 [00:02<01:05,  2.26it/s]  5%|▌         | 8/153 [00:03<00:59,  2.43it/s]  7%|▋         | 10/153 [00:04<01:08,  2.10it/s]  7%|▋         | 11/153 [00:06<01:26,  1.64it/s]  8%|▊         | 12/153 [00:07<01:42,  1.38it/s]  8%|▊         | 13/153 [00:08<01:56,  1.21it/s]  9%|▉         | 14/153 [00:09<02:07,  1.09it/s] 14%|█▍        | 22/153 [00:10<00:45,  2.88it/s] 15%|█▌        | 23/153 [00:12<01:02,  2.07it/s] 16%|█▋        | 25/153 [00:13<01:04,  2.00it/s] 17%|█▋        | 26/153 [00:14<01:16,  1.67it/s] 18%|█▊        | 27/153 [00:15<01:29,  1.40it/s] 19%|█▉        | 29/153 [00:16<01:22,  1.51it/s] 20%|█▉        | 30/153 [00:18<01:33,  1.31it/s] 20%|██        | 31/153 [00:19<01:44,  1.17it/s] 22%|██▏       | 33/153 [00:20<01:30,  1.33it/s] 25%|██▍       | 38/153 [00:21<00:51,  2.24it/s] 25%|██▌       | 39/153 [00:22<01:01,  1.84it/s] 31%|███▏      | 48/153 [00:23<00:29,  3.62it/s] 36%|███▌      | 55/153 [00:25<00:23,  4.24it/s] 37%|███▋      | 57/153 [00:26<00:27,  3.48it/s] 39%|███▊      | 59/153 [00:27<00:32,  2.92it/s] 42%|████▏     | 65/153 [00:28<00:24,  3.56it/s] 44%|████▍     | 68/153 [00:29<00:26,  3.25it/s] 56%|█████▌    | 85/153 [00:31<00:10,  6.54it/s] 57%|█████▋    | 87/153 [00:32<00:13,  5.07it/s] 60%|██████    | 92/153 [00:33<00:12,  4.86it/s] 63%|██████▎   | 97/153 [00:34<00:11,  4.73it/s] 66%|██████▌   | 101/153 [00:35<00:12,  4.29it/s] 67%|██████▋   | 102/153 [00:36<00:15,  3.26it/s] 71%|███████   | 108/153 [00:38<00:11,  3.78it/s] 71%|███████   | 109/153 [00:39<00:15,  2.93it/s] 73%|███████▎  | 111/153 [00:40<00:16,  2.54it/s] 76%|███████▌  | 116/153 [00:41<00:12,  3.05it/s] 81%|████████  | 124/153 [00:42<00:06,  4.17it/s] 82%|████████▏ | 125/153 [00:43<00:08,  3.19it/s] 92%|█████████▏| 140/153 [00:45<00:02,  6.01it/s] 92%|█████████▏| 141/153 [00:46<00:02,  4.11it/s] 94%|█████████▍| 144/153 [00:47<00:02,  3.65it/s] 97%|█████████▋| 149/153 [00:49<00:01,  3.83it/s] 99%|█████████▊| 151/153 [00:50<00:00,  2.95it/s]100%|██████████| 153/153 [00:50<00:00,  3.02it/s]
+0it [00:00, ?it/s]1it [00:03,  3.90s/it]2it [00:07,  3.80s/it]3it [00:11,  3.74s/it]4it [00:14,  3.68s/it]5it [00:18,  3.79s/it]6it [00:22,  3.72s/it]7it [00:26,  3.67s/it]8it [00:29,  3.67s/it]9it [00:33,  3.67s/it]10it [00:36,  3.65s/it]11it [00:40,  3.64s/it]12it [00:44,  3.66s/it]13it [00:47,  3.63s/it]14it [00:51,  3.63s/it]15it [00:55,  3.62s/it]16it [00:58,  3.64s/it]17it [01:02,  3.68s/it]18it [01:06,  3.69s/it]19it [01:09,  3.67s/it]20it [01:13,  3.64s/it]21it [01:17,  3.74s/it]22it [01:20,  3.67s/it]23it [01:24,  3.63s/it]24it [01:28,  3.61s/it]25it [01:31,  3.61s/it]26it [01:35,  3.63s/it]27it [01:38,  3.64s/it]28it [01:42,  3.67s/it]29it [01:46,  3.66s/it]30it [01:50,  3.70s/it]31it [01:53,  3.72s/it]32it [01:57,  3.67s/it]33it [02:00,  3.62s/it]34it [02:04,  3.71s/it]35it [02:08,  3.71s/it]36it [02:12,  3.71s/it]37it [02:16,  3.71s/it]38it [02:19,  3.68s/it]39it [02:23,  3.70s/it]40it [02:26,  3.63s/it]41it [02:30,  3.67s/it]42it [02:34,  3.61s/it]43it [02:37,  3.69s/it]44it [02:41,  3.66s/it]45it [02:44,  3.56s/it]46it [02:48,  3.54s/it]47it [02:52,  3.62s/it]48it [02:55,  3.57s/it]49it [02:59,  3.62s/it]50it [03:03,  3.68s/it]51it [03:06,  3.68s/it]52it [03:10,  3.62s/it]53it [03:13,  3.61s/it]54it [03:17,  3.64s/it]55it [03:21,  3.70s/it]56it [03:24,  3.60s/it]57it [03:28,  3.55s/it]58it [03:32,  3.61s/it]59it [03:35,  3.61s/it]60it [03:39,  3.55s/it]61it [03:42,  3.52s/it]62it [03:45,  3.48s/it]63it [03:49,  3.43s/it]64it [03:52,  3.48s/it]65it [03:56,  3.54s/it]66it [04:00,  3.58s/it]67it [04:03,  3.65s/it]68it [04:07,  3.64s/it]69it [04:11,  3.63s/it]70it [04:15,  3.69s/it]71it [04:19,  3.78s/it]72it [04:23,  3.99s/it]73it [04:27,  3.98s/it]74it [04:31,  3.89s/it]75it [04:34,  3.74s/it]76it [04:37,  3.62s/it]77it [04:41,  3.62s/it]78it [04:45,  3.61s/it]79it [04:48,  3.66s/it]80it [04:52,  3.65s/it]81it [04:56,  3.64s/it]82it [04:59,  3.57s/it]83it [05:03,  3.67s/it]84it [05:06,  3.63s/it]85it [05:10,  3.64s/it]86it [05:14,  3.64s/it]87it [05:18,  3.76s/it]88it [05:22,  3.76s/it]89it [05:25,  3.76s/it]90it [05:29,  3.76s/it]91it [05:33,  3.75s/it]92it [05:36,  3.67s/it]93it [05:40,  3.65s/it]94it [05:43,  3.61s/it]95it [05:47,  3.58s/it]96it [05:51,  3.64s/it]96it [05:51,  3.66s/it]
+0it [00:00, ?it/s]1it [00:03,  3.68s/it]2it [00:07,  3.64s/it]3it [00:10,  3.64s/it]4it [00:14,  3.69s/it]5it [00:18,  3.73s/it]6it [00:21,  3.64s/it]7it [00:25,  3.56s/it]8it [00:28,  3.57s/it]9it [00:32,  3.49s/it]10it [00:35,  3.49s/it]11it [00:39,  3.52s/it]12it [00:42,  3.55s/it]13it [00:46,  3.59s/it]14it [00:49,  3.52s/it]15it [00:53,  3.57s/it]16it [00:57,  3.64s/it]17it [01:01,  3.70s/it]18it [01:04,  3.61s/it]19it [01:08,  3.69s/it]20it [01:12,  3.67s/it]21it [01:16,  3.73s/it]22it [01:19,  3.69s/it]23it [01:23,  3.77s/it]24it [01:27,  3.80s/it]25it [01:31,  3.79s/it]26it [01:34,  3.73s/it]27it [01:38,  3.71s/it]28it [01:42,  3.70s/it]29it [01:45,  3.64s/it]30it [01:49,  3.60s/it]31it [01:52,  3.60s/it]32it [01:56,  3.56s/it]33it [01:59,  3.46s/it]34it [02:03,  3.51s/it]35it [02:06,  3.60s/it]36it [02:10,  3.64s/it]37it [02:14,  3.59s/it]38it [02:18,  3.67s/it]39it [02:21,  3.73s/it]40it [02:25,  3.75s/it]41it [02:29,  3.70s/it]42it [02:32,  3.67s/it]43it [02:36,  3.67s/it]44it [02:40,  3.63s/it]45it [02:43,  3.66s/it]46it [02:47,  3.74s/it]47it [02:51,  3.78s/it]48it [02:55,  3.74s/it]49it [02:59,  3.75s/it]50it [03:02,  3.69s/it]51it [03:06,  3.71s/it]52it [03:09,  3.65s/it]53it [03:13,  3.66s/it]54it [03:17,  3.62s/it]55it [03:20,  3.69s/it]56it [03:24,  3.68s/it]57it [03:28,  3.78s/it]58it [03:32,  3.69s/it]59it [03:35,  3.67s/it]60it [03:39,  3.59s/it]61it [03:42,  3.57s/it]62it [03:46,  3.53s/it]63it [03:49,  3.53s/it]64it [03:53,  3.57s/it]65it [03:56,  3.56s/it]66it [04:00,  3.51s/it]67it [04:03,  3.49s/it]68it [04:07,  3.60s/it]69it [04:11,  3.60s/it]70it [04:14,  3.59s/it]71it [04:18,  3.64s/it]72it [04:22,  3.68s/it]73it [04:25,  3.67s/it]74it [04:29,  3.68s/it]75it [04:32,  3.61s/it]76it [04:36,  3.57s/it]77it [04:40,  3.57s/it]78it [04:43,  3.54s/it]79it [04:46,  3.51s/it]80it [04:50,  3.50s/it]81it [04:53,  3.50s/it]82it [04:57,  3.54s/it]83it [05:01,  3.58s/it]84it [05:04,  3.53s/it]85it [05:08,  3.61s/it]86it [05:11,  3.47s/it]87it [05:15,  3.51s/it]88it [05:18,  3.55s/it]89it [05:22,  3.63s/it]90it [05:26,  3.56s/it]91it [05:29,  3.57s/it]92it [05:33,  3.59s/it]93it [05:36,  3.62s/it]94it [05:40,  3.59s/it]95it [05:44,  3.57s/it]96it [05:47,  3.60s/it]96it [05:47,  3.62s/it]
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/pynwb/file.py:471: UserWarning: Date is missing timezone information. Updating to local timezone.
+  args_to_set['session_start_time'] = _add_missing_timezone(session_start_time)
+
+Hub1-20240308_interception002.ns2 opened
+
+Hub1-20240308_interception002.ns2 closed
+
+NSP-20240308_interception002.nev opened
+
+NSP-20240308_interception002.nev closed
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240311_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240312_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240313_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240313_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240314_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240314_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240315_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240315_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240318_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240318_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240319_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240319_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240320_BrUtahInterception120SemiBc_001
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240320_BrUtahInterception120SemiBc_002
+integrate trial behavior
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/neural_correlation_analysis.py
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/neural_correlation_analysis.py/formatted_data’: Not a directory
+integrate no sort neural data
+Traceback (most recent call last):
+  File "/AMAX/cuihe_lab/cuilab_share/Bohr/Code/nwb_builder/data_integration_pipeline/neural_data/br_share/pipeline_no_sort.py", line 123, in <module>
+    datafile = os.path.join(f_l[0], rec_name[0])
+                            ^^^
+NameError: name 'f_l' is not defined
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/neural_correlation_analysis.py/formatted_data’: Not a directory
+integrate neural data
+Traceback (most recent call last):
+  File "/AMAX/cuihe_lab/cuilab_share/Bohr/Code/nwb_builder/data_integration_pipeline/neural_data/br_share/pipeline.py", line 121, in <module>
+    datafile = os.path.join(f_l[0], rec_name[0])
+                            ^^^
+NameError: name 'f_l' is not defined
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/neural_correlation_analysis.py/formatted_data’: Not a directory
+integrate continuous behavior
+Traceback (most recent call last):
+  File "/AMAX/cuihe_lab/cuilab_share/Bohr/Code/nwb_builder/data_integration_pipeline/continuous_behavior/aie_share/pipeline.py", line 56, in <module>
+    with open(matching_files[0],'r') as f:
+              ~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/neural_correlation_analysis.py/formatted_data’: Not a directory
+integrate trial behavior
