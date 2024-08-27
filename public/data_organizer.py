@@ -82,12 +82,11 @@ def organize_file(root_dir):
 
 
 #%%
-if __name__ == "__main()__":
-    parser = argparse.ArgumentParser(argument_default=None)
-    parser.add_argument("-f", "--file", type=str,
-                        default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Brain_control/20240416_sg_fa_2d_centerout_brain_control', 
-                        metavar='/the/path/your/data/located/in', help='input folder')
+parser = argparse.ArgumentParser(argument_default=None)
+parser.add_argument("-r", "--root", type=str,
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Brain_control/20240416_sg_fa_2d_centerout_brain_control', 
+                    metavar='/the/root/path/your/data/located/in', help='root folder')
 
-    args = parser.parse_args()
-    raw_dirname = args.file
-    organize_file(raw_dirname)
+args = parser.parse_args()
+
+organize_file(args.root)

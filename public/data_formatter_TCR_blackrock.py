@@ -6,36 +6,30 @@ Created on Sun Feb 14 22:03:01 2021
 @author: cuilab
 """
 
-import joblib
-import argparse
-import glob
-import sys
 import os
 import yaml
 import copy
-import numpy as np
-import pandas as pd
-from probeinterface import Probe, ProbeGroup
-import brpylib
-from scipy.signal import butter, lfilter, find_peaks
-import scipy
 from tqdm import tqdm
-import get_probe_bohr_utah96
-from neuroconv.datainterfaces import BlackrockRecordingInterface
-from zoneinfo import ZoneInfo
-from pathlib import Path
+import numpy as np
+import scipy
+from scipy.signal import butter, lfilter, find_peaks
+import brpylib
+import argparse
+from get_probe_bohr_utah96 import get as get_probe
+from user_input_entry_collection import BRShare as bs
+from SmartNeo.user_layer.dict_to_neo import templat_neo
+from SmartNeo.interface_layer.nwb_interface import NWBInterface
 
 
-def format_file(root_dir):
+def format_file(root_dir, map_path, output_dir):
     #%% load template
-    # FILEPATH = os.path.dirname(os.path.abspath(__file__))
-    # Template = yaml.safe_load(open(os.path.join(FILEPATH,'template.yml')))
-    # Template['LFP'] = templat_neo['ana']
-    # Template['RecordingSystemEvent'] = templat_neo['event']
-    # Template['Spike'] = {'SorterName' : {},'kargs' : {}}
+    FILEPATH = os.path.dirname(os.path.abspath(__file__))
+    Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
+    Template['LFP'] = templat_neo['ana']
+    Template['RecordingSystemEvent'] = templat_neo['event']
+    Template['Spike'] = {'SorterName' : {},'kargs' : {}}
 
-    map_path = root_dir.map_path
-    probegroup = get_probe_bohr_utah96.get(map_path)
+    probegroup = get_probe(map_path)
 
     #%% read ns6 file
     walk_file = [j for j in os.walk(root_dir)]
@@ -67,6 +61,7 @@ def format_file(root_dir):
     
 
     #%% convert TCR
+    InputList = []
     InputData = copy.deepcopy(Template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
@@ -119,7 +114,7 @@ def format_file(root_dir):
     InputList.append(InputData)
 
     #%% convert RecordingSystemEvent
-    walk_file = [j for j in os.walk(raw_dirname)]
+    walk_file = [j for j in os.walk(root_dir)]
 
     for f_l in walk_file:
         rec_name = [f_n for f_n in f_l[2] if ('.nev' in f_n) and ('NSP' in f_n)]
@@ -162,30 +157,28 @@ def format_file(root_dir):
     gc.collect()
 
     #%% save to appointed path
-    if not os.path.exists(os.path.join(args.output,'formatted_data')):
-        os.mkdir(os.path.join(args.output,'formatted_data'))
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
         
     nwb_saver = NWBInterface()
     nwb_saver.save_nwb(blockdata = neuralblock, 
-                    filename = os.path.join(args.output, 'formatted_data', 'neural_data_no_sort.nwb'))
+                       filename = os.path.join(output_dir, 'neural_data_no_sort.nwb'))
 
 
+#%% 
+parser = argparse.ArgumentParser(argument_default=None)
 
+parser.add_argument("-r", "--root", type=str,
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001', 
+                    metavar='/the/path/your/data/located/in', help='input folder')
 
-if __name__ == "__main()__":
-    #%% 
-    parser = argparse.ArgumentParser(argument_default=None)
+parser.add_argument('-o', '--output', type=str, 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001/formatted_data', 
+                    metavar='/the/path/you/want/to/save', help='output folder')
 
-    parser.add_argument("-f", "--file", type=str,
-                        default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001', 
-                        metavar='/the/path/your/data/located/in', help='input folder')
+parser.add_argument('-mp', '--map_path', 
+                    default='/home/cuihe_lab/lichenyang/DATA_AMAX/Neucyber-NC-2023-A-01/Bohr/Spike_sorting/SN+11386-000049.cmp')
 
-    parser.add_argument('-o', '--output', type=str, 
-                        default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001', 
-                        metavar='/the/path/you/want/to/save', help='output folder')
+args = parser.parse_args()
 
-    parser.add_argument('-mp', '--map_path', 
-                        default='/home/cuihe_lab/lichenyang/DATA_AMAX/Neucyber-NC-2023-A-01/Bohr/Spike_sorting/SN+11386-000049.cmp')
-
-    args = parser.parse_args()
-    raw_dirname = args.file
+format_file(args.root, args.map_path, args.output)

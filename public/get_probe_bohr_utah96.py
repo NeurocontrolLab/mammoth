@@ -7,7 +7,7 @@ Created on Mon Aug 26 15:42:01 2024
 """
 
 import numpy as np
-from probeinterface import read_probeinterface, Probe, ProbeGroup
+from probeinterface import Probe, ProbeGroup
 
 
 def get(map_path):
