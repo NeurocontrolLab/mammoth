@@ -1,25 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 28 10:23:14 2024
+Created on Tue Aug 29 16:00:14 2024
 
 @author: cuilab
 """
 
-import tkinter as tk
-from tkinter import ttk
-from tkinter import filedialog, messagebox
-import csv
-import copy
-from datetime import datetime
-
-
-#%%
-"""
-Created on Wed Aug 28 14:10:11 2024
-
-@author: cuilab
-"""
 #%%
 import pandas as pd
 import os
@@ -37,7 +23,7 @@ import copy
 from datetime import datetime
 
 
-#%%
+#%% helper functions
 # overview all files in the root directory
 def get_all_files(root_dir):
     data_menu = pd.DataFrame(columns=['path', 'name', 'create_time', 'last_edit_time'])
@@ -242,15 +228,12 @@ def query_entry_table(path, print_or_not=1, condition=None, show_columns='all'):
     return v_mt_dm
 
 
-#%%
+#%% gui functions
+
 # main window
 root = tk.Tk()
 root.title("Metadata")
-
-# set row height
-s = ttk.Style()
-
-s.configure("Treeview", rowheight=25)
+root.geometry("1200x400")
 
 var = tk.StringVar()
 
@@ -262,29 +245,22 @@ def choose_directory():
     if not curr_dir:
         return
     else:
-        var.set(curr_dir)
+        curr_dir_show = curr_dir.split('/')[-1] if '/' in curr_dir else curr_dir.split('\\')[-1]
+        var.set(curr_dir_show)
     hierarchy_print = view_tree(curr_dir)
     insert_tree(hierarchy_print)
     
 
 def insert_tree(tree_list):
+    tree_listbox.delete(0, tk.END)
+
     for i in range(len(tree_list)):
         tree_listbox.insert(i+1, tree_list[i])
 
-
-# add element
-columns = ["Tree", "View"]
-treeview = ttk.Treeview(root, columns=columns, show="headings", height=30)
-
-treeview.column("Tree", width=200)
-treeview.column("View", width=800)
-
-treeview.heading("Tree", text="")
-treeview.heading("View", text="")
-
-
 def show_metadata():
     selected_indices = tree_listbox.curselection()
+    global selected_dir_list
+    selected_dir_list = []
     for id in selected_indices:
         bottom_dir = hierarchy_print[id]
         # print(bottom_dir)
@@ -298,24 +274,117 @@ def show_metadata():
             # print(cid2)
             dir_path = os.path.join(hierarchy_print[cid2].split('-')[-1], dir_path)
 
-        print('full path = {}'.format(dir_path.split('|')[-1]))
+        # print('full path = {}'.format(dir_path.split('|')[-1]))
+        selected_dir_list.append(dir_path.split('|')[-1])
+    # print(selected_dir_list)
+
+    metadata_list = []
+    dict_list = []
+    global metadata_df
+    metadata_df = pd.DataFrame()
+    for sdir in selected_dir_list:
+        for dirpath, dirnames, filenames in os.walk(sdir):
+            for file in filenames:
+                if file == 'metadata.csv':
+                    metadata_list.append(os.path.join(dirpath, file))
+                    metadata_dict = {}
+                    with open(os.path.join(dirpath, file), mode='r', newline='') as csvfile:
+                        reader = csv.reader(csvfile)
+                        next(reader)
+                        for row in reader:
+                            if len(row) !=2:
+                                continue
+                            key, value = row
+                            metadata_dict[key] = value
+                    # print(metadata_dict)
+                    dict_list.append(metadata_dict)
+    # print(metadata_list)
+    metadata_df = pd.DataFrame(dict_list)
+    metadata_df['DirectoryPath'] = metadata_list
+    metadata_df['DirectoryPath'] = metadata_df['DirectoryPath'].apply(lambda x: x.split('metadata.csv')[0][:-1])
+    metadata_df.drop_duplicates(subset=['DirectoryPath'], keep='first', inplace=True)
+    # print(metadata_df)
+    refresh_metadata()
 
 
+def refresh_metadata():
+    for child in view_table.get_children():
+        view_table.delete(child)
+    
+    for df_column in view_table["columns"]:
+        view_table.heading(df_column, text=df_column)
+    
+    for row in metadata_df.itertuples(index=False):
+        view_table.insert("", "end", values=row)
 
-top_frame = ttk.Frame(root)
-top_frame.pack(side=tk.TOP, fill=tk.X, pady=10)
+def save_metadata_view_to_csv():
+    if messagebox.askokcancel("Save View", " Do you want to save this view?"):
+        file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+        if not file_path:
+            return
+        try:
+            metadata_df.to_csv(file_path)
+            messagebox.showinfo("Save Data", "Data saved successfully")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save csv:{e}")
 
-load_button = ttk.Button(top_frame, text="Choose directory", command=choose_directory)
-load_button.pack(side=tk.LEFT, padx=10)
 
-dir_label = tk.Label(top_frame, textvariable=var, font=('Arial', 8), width=70, height=3)
-dir_label.pack(side=tk.LEFT, padx=10)
+# set row height
+s = ttk.Style()
 
-tree_listbox = tk.Listbox(top_frame, width=90, height=30, selectmode=tk.MULTIPLE)
-tree_listbox.pack(side=tk.LEFT, padx=10, pady=30)
+s.configure("Treeview", rowheight=25)
 
-view_button = ttk.Button(top_frame, text="View metadata", command=show_metadata)
-view_button.pack(side=tk.LEFT, padx=10, pady=40)
+left_frame = tk.Frame(root)
+left_frame.pack(side=tk.LEFT, fill='y', padx=10, pady=10, expand=0)
+
+left_frame_top = tk.Frame(left_frame)
+left_frame_top.pack(side=tk.TOP, fill='x', padx=10, pady=10, expand=0)
+
+left_frame_bottom = tk.Frame(left_frame)
+left_frame_bottom.pack(side=tk.TOP, fill='x', padx=10, ipady=10, expand=0)
+
+load_button = ttk.Button(left_frame_top, text="Choose directory", command=choose_directory)
+load_button.pack(side=tk.LEFT, padx=10, pady=5)
+
+# dir_label = tk.Label(left_frame_top, textvariable=var, font=('Arial', 8), width=30, height=1)
+# dir_label.pack(side=tk.LEFT, padx=10, pady=5)
+
+# scrollbar_x = tk.Scrollbar(left_frame_bottom, orient="horizontal")
+# scrollbar_x.pack(side='bottom', fill='x')
+tree_listbox = tk.Listbox(left_frame_bottom, width=50, height=15, selectmode=tk.MULTIPLE,)
+tree_listbox.pack(side=tk.LEFT, padx=10, pady=0)
+# tree_listbox.config(xscrollcommand=scrollbar_x.set)
+# scrollbar_x.configure(command=tree_listbox.xview)
+
+
+right_frame = tk.Frame(root)
+right_frame.pack(side=tk.LEFT, fill='y', padx=10, pady=10, expand=0)
+
+right_frame_top = tk.Frame(right_frame)
+right_frame_top.pack(side=tk.TOP, fill='x', padx=10, pady=10, expand=0)
+
+right_frame_bottom = tk.Frame(right_frame)
+right_frame_bottom.pack(side=tk.TOP, fill='both', padx=10, pady=10, expand=0)
+
+view_button = ttk.Button(right_frame_top, text="View metadata", command=show_metadata)
+view_button.pack(side=tk.LEFT, padx=10, pady=5)
+
+save_button = ttk.Button(right_frame_top, text="Save view", command=save_metadata_view_to_csv)
+save_button.pack(side=tk.LEFT, padx=10, pady=5)
+
+# add element
+view_table = ttk.Treeview(right_frame_bottom)
+view_table["columns"] = list(metadata_df.columns)
+view_table["show"] = "headings"
+scrollbar_y = tk.Scrollbar(right_frame_bottom, orient="vertical", command=view_table.yview)
+view_table.configure(yscrollcommand=scrollbar_y.set)
+scrollbar_y.pack(side='right', fill='y')
+scrollbar_x = tk.Scrollbar(right_frame_bottom, orient="horizontal", command=view_table.xview)
+view_table.configure(xscrollcommand=scrollbar_x.set)
+scrollbar_x.pack(side='bottom', fill='x')
+view_table.pack(side=tk.LEFT, padx=10, pady=0, fill="both", expand=0)
+
 
 root.mainloop()
+
 # %%
