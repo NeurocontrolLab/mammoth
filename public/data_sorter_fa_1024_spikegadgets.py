@@ -16,7 +16,7 @@ from probeinterface import Probe, ProbeGroup
 from probeinterface import read_probeinterface
 
 
-def sorting(root_dir, map_path, container_dir):
+def sorting(root_dir, map_path, output_dir, container_dir):
     #%% load probe
     probegroup2 = read_probeinterface(map_path) # read probe json
 
@@ -70,7 +70,7 @@ def sorting(root_dir, map_path, container_dir):
     recording = recording.set_probe(probe_2d)
 
     # make folder for kilo data saving
-    data_path_ = os.path.join(root_dir, 'sorted_data', 'kilosort2_5_output')
+    data_path_ = os.path.join(output_dir, 'kilosort2_5_output')
 
     if not os.path.exists(data_path_):
         os.makedirs(data_path_)
@@ -114,15 +114,18 @@ parser = argparse.ArgumentParser(
     epilog = 'Neucyber-NC-2023-A-01'
 )
 
-parser.add_argument('-dp', '--data_path', 
+parser.add_argument('-r', '--root', 
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001')
 
 parser.add_argument('-mp', '--map_path', 
                     default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller/nezha-gai.json')
 
-parser.add_argument('-cp', '--container_path', 
+parser.add_argument('-o', '--output',
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001/sorted_data')
+
+parser.add_argument('-cp', '--container', 
                     default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller')
 
 args = parser.parse_args()
 
-sorting(args.data_path, args.map_path, args.container_path)
+sorting(args.root, args.map_path, args.output, args.container)

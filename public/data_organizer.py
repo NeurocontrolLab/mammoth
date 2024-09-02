@@ -18,7 +18,7 @@ target_folder_name_list = ['raw_data','sorted_data','formatted_data','bhv',
                            '']
 
 rec_name = ['.ns6','.ns3','.ns2','.ccf','.nev','.rec']
-video_name = ['.mkv', '.mp4', 'webm']
+video_name = ['.mkv', '.mp4', '.webm']
 bhv_name = ['.png', '.mat', '.log', '.bhv2', '.psydat']
 
 
@@ -35,8 +35,8 @@ def handle_file(target_folder_name, suffix_name_list, file_walk, root_dir):
         The list of the suffix names which should be included in the target folder.
     file_walk: tuple
         This results from os.walk, as (current directory, sub directory, files) 
-    root_path: str
-        The parent directory of target folder
+    root_dir: str
+        The parent directory of the target folder
 
     Returns
     -------

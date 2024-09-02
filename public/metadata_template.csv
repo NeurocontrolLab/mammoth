@@ -1,0 +1,30 @@
+Key,Value
+Subject/subject_id,M001
+Subject/sex,M
+Subject/age,P30D
+Subject/species,Mus musculus
+NWBFile/session_start_time,2021-01-01 12:00:00
+NWBFile/session_id,session_1
+NWBFile/session_description,Observations of desert plants and reptiles on the island of San Cristobal.
+NWBFile/experiment_description,Observations of wildlife across the Galapagos Islands.
+NWBFile/experimenter,"Darwin, Charles"
+NWBFile/lab,Evolutionary Biology
+NWBFile/institution,University of Cambridge
+NWBFile/keywords/0,finches
+NWBFile/keywords/1,evolution
+NWBFile/keywords/2,Galapagos
+Ecephys/Device/0/name,Neuropixel-Imec
+Ecephys/Device/0/description,"{""probe_type"": ""0"", ""probe_type_description"": ""NP1.0"", ""flex_part_number"": ""NP2_FLEX_0"", ""connected_base_station_part_number"": ""NP2_QBSC_00""}"
+Ecephys/Device/0/manufacturer,Imec
+Ecephys/ElectrodeGroup/0/name,s0
+Ecephys/ElectrodeGroup/0/description,a group representing shank s0
+Ecephys/ElectrodeGroup/0/location,unknown
+Ecephys/ElectrodeGroup/0/device,Neuropixel-Imec
+Ecephys/ElectricalSeriesAP/name,ElectricalSeriesAP
+Ecephys/ElectricalSeriesAP/description,Acquisition traces for the ElectricalSeriesAP.
+Ecephys/Electrodes/0/name,shank_electrode_number
+Ecephys/Electrodes/0/description,0-indexed channel within a shank.
+Ecephys/Electrodes/1/name,group_name
+Ecephys/Electrodes/1/description,Name of the ElectrodeGroup this electrode is a part of.
+Ecephys/Electrodes/2/name,contact_shapes
+Ecephys/Electrodes/2/description,The shape of the electrode

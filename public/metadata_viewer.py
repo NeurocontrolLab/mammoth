@@ -17,10 +17,7 @@ import numpy as np
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
-from tkcalendar import DateEntry
 import csv
-import copy
-from datetime import datetime
 
 
 #%% helper functions

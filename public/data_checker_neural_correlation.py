@@ -16,7 +16,6 @@ from SmartNeo.analysis_layer.spike_preprocessor3 import SpikeStatistics
 from elephant.kernels import GaussianKernel
 from sklearn.linear_model import MultiTaskLasso
 from sklearn.model_selection import cross_val_score
-from elephant.kernels import GaussianKernel
 from scipy import signal
 from scipy.ndimage import gaussian_filter
 
@@ -24,7 +23,7 @@ from scipy.ndimage import gaussian_filter
 def run(data_dir, output_dir, description_dir):
 
     #%% read data
-    # read formated NWB data (TCR & BCI behaviour)
+    # read formatted NWB data (TCR & BCI behaviour)
     nwb_saver = NWBInterface()
     neural_data = nwb_saver.read_nwb(filename = os.path.join(data_dir,'neural_data_no_sort.nwb'))
 
@@ -142,16 +141,16 @@ def run(data_dir, output_dir, description_dir):
 
 
 parser = argparse.ArgumentParser(argument_default=None)
-parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001', 
-                    metavar='/the/root/path/your/data/located/in', help='root folder')
 parser.add_argument("-d", "--data", type=str,
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001/formatted_data', 
-                    metavar='/the/path/your/data/located/in', help='data folder')
+                    metavar='/the/path/your/nwb/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
+parser.add_argument("-s", "--description", type=str,
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001/description', 
+                    metavar='/the/path/your/descriptive/data/located/in', help='root folder')
 
 args = parser.parse_args()
 
-run(args.data, args.output, args.output)
+run(args.data, args.output, args.description)

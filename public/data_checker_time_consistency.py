@@ -17,10 +17,10 @@ from SmartNeo.interface_layer.nwb_interface import NWBInterface
 def run(data_dir, output_dir):
     # load data
     nwb_saver = NWBInterface()
-    bhv_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'continuous_behavior.nwb'))
+    neural_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'neural_data_no_sort.nwb'))
 
     nwb_saver = NWBInterface()
-    neural_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'neural_data_no_sort.nwb'))
+    bhv_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'continuous_behavior.nwb'))
 
     # get events from neural recording system
     neural_event = [i for i in neural_data.segments if i.name=='RecordingSystemEvent'][0]

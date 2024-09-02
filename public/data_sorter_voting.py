@@ -57,15 +57,15 @@ parser = argparse.ArgumentParser(
     description = 'Compare sorting results from Kilosort 2.5 and SpykingCircus',
 )
 
-parser.add_argument('-dp', '--data_path',
+parser.add_argument('-r', '--root',
                     default='/AMAX/cuihe_lab/chenyun/test/Nezha/Brain_control/20240522_centerOutKalmanNet_threshold70_001')
 
 args = parser.parse_args()
 
-data_path = args.data_path
+root_dir = args.r
 
 # make folder for kilo data saving
-data_path_ks = os.path.join(data_path,'sorted_data','kilosort2_5_output')
-data_path_sc = os.path.join(data_path,'sorted_data','spykingcircus_output')
+data_path_ks = os.path.join(root_dir,'sorted_data','kilosort2_5_output')
+data_path_sc = os.path.join(root_dir,'sorted_data','spykingcircus_output')
 
 compare(data_path_ks, data_path_sc)
