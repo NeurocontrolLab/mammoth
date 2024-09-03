@@ -6,13 +6,14 @@ Created on Mon Aug 26 15:42:01 2024
 @author: cuilab
 """
 
+import os
 import numpy as np
 from probeinterface import Probe, ProbeGroup
 
 
-def get(map_path):
-
-    with open(map_path,'r') as f:
+def get_probe(map_path):
+    # Bohr
+    with open(map_path, 'r') as f:
         probe_info = f.readlines()[14::]
 
     probe_info = [i.split() for i in probe_info][0:-1]
@@ -29,8 +30,7 @@ def get(map_path):
         probe_2d.annotate(
             name = array, 
             manufacturer="blackrock microsystem",
-            description = 'one 96 Utah array'
-            )
+            description = 'one 96 Utah array')
         positions = []
         device_channel = []
         
@@ -44,8 +44,8 @@ def get(map_path):
             # test2.append(ielec[2]+ielec[3])
             
         probe_2d.set_contacts(positions=np.array(positions), 
-                            shapes='circle', 
-                            shape_params={'radius': 20})
+                              shapes='circle', 
+                              shape_params={'radius': 20})
         probe_2d.set_device_channel_indices(device_channel)
         probe_2d.create_auto_shape(probe_type='tip')
         probegroup.add_probe(probe_2d)

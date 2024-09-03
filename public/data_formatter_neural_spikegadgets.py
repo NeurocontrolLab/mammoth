@@ -7,6 +7,7 @@ Created on Sun Feb 14 22:03:01 2021
 """
 
 import os
+import sys
 import yaml
 import copy
 from tqdm import tqdm
@@ -14,13 +15,14 @@ import scipy
 from scipy.signal import butter, lfilter, find_peaks
 import numpy as np
 import pandas as pd
-import brpylib
 import argparse
 import quantities as pq
+import readTrodesExtractedDataFile3 as trodesReader
+from probeinterface import read_probeinterface
 from user_input_entry import BRShare as bs
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
-from get_probe import get_probe
+
 
 
 #%% define functions
@@ -64,7 +66,7 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
     InputData['SBP'] = 'null'
     InputData['LFP'] = 'null'
 
-    InputData['name'] = sorter_output_path.split(os.sep)[-1].lower().replace('_', '.')
+    InputData['name'] = sorter_output_path.split(os.sep)[-1].lower().replace('_', '.') 
     InputData['Spike'] = {}
 
     fs, lowcut, highcut = bandpass_params
@@ -81,41 +83,37 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
     for i in os.listdir(sorter_output_path):
         shank_ind = i.split("_")[2]
         data_path = os.path.join(sorter_output_path, i, 'sorter_output')
-        cluster_info = pd.read_csv(os.path.join(data_path, 'cluster_info.tsv'), sep="\t")
+        cluster_info = pd.read_csv(os.path.join(data_path, 'cluster_info.tsv'),sep="\t")
         spike_times = np.load(os.path.join(data_path, 'spike_times.npy')).squeeze()
         spike_clusters = np.load(os.path.join(data_path, 'spike_clusters.npy')).squeeze()
-        #whitened_data = np.array(np.memmap(os.path.join(data_path, 'temp_wh.dat'),mode='r',dtype=np.int16).reshape((-1,96)))
+        # whitened_data = np.array(np.memmap(os.path.join(data_path, 'temp_wh.dat'),mode='r',dtype=np.int16).reshape((-1,256)))
         
         p = probegroup.probes[int(shank_ind)]
-        
+
         for clu in tqdm(np.unique(spike_clusters)):
             ind = np.where(cluster_info.cluster_id==clu)[0][0]
             ci = cluster_info.iloc[ind].to_dict()
             st = spike_times[spike_clusters==clu]
             # choose 24 sampling points before and 40, sampling rate = 30k Hz
             # => [-0.5ms, +1 ms], referring to WaveClus
-            swi = [st-24+i for i in range(64)]  
-            bch = p.device_channel_indices[ci['ch']]
-            
-            # mean_waveform = whitened_data[:,ci['ch']][swi].squeeze().mean(1).astype(float)
-                
+            swi = list(np.array([st-24+i for i in range(64)])[:, 0:-10])
             if not 'good' == ci['group']:
                 continue
             
-            f_ch = butter_bandpass_filter(data[:, bch], lowcut, highcut, fs, order=5)
-            mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
-            # mean_waveform = data[swi,bch].squeeze().mean(1).astype(float)
+            dev_ch = p.device_channel_indices[ci['ch']]
+            spk_data_name = [ch_name for ch_name in spikeband_files if str(dev_ch+1) == ch_name.split('_')[-1][2:-7]][0]
+            data = trodesReader.readTrodesExtractedDataFile(os.path.join(rec_dir, spikeband_path, spk_data_name))
+            mean_waveform = data['data']['voltage'][swi].squeeze().mean(1).astype(float)
             
-            spike_description = {'clu': float(ci['cluster_id']),
-                                 'chn': float(bch),
-                                 'mean_waveform': mean_waveform,
-                                 'pos': p.contact_positions[ci['ch']],
-                                 'electrode': float(shank_ind),
-                                 'annotations': '',
-                                 'chn_meta': ci}
-            sampling_rate = 30000
+            spike_description = {'clu':float(ci['cluster_id']),
+                                'chn':float(p.device_channel_indices[ci['ch']+int(shank_ind)*128]),
+                                'mean_waveform':mean_waveform,
+                                'pos' : p.contact_positions[ci['ch']+int(shank_ind)*128],
+                                'electrode' : float(shank_ind),
+                                'annotations' : '',
+                                'chn_meta' : ci}
             
-            ptp_t = timestamp[st]/1e9
+            sampling_rate = int(timestamp['clockrate'])
             if not 'shank ' + shank_ind in InputData['Spike']:
                 InputData['Spike']['shank ' + shank_ind] = {}
             if not 'chn ' + str(ci['ch']) in InputData['Spike']['shank ' + shank_ind]:
@@ -125,11 +123,11 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
                 ['clu ' + str(ci['cluster_id'])]['spk'] = templat_neo['spk'].copy()
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
-                ['clu ' + str(ci['cluster_id'])]['spk']['times'] = ptp_t * pq.s
+                ['clu ' + str(ci['cluster_id'])]['spk']['times'] = timestamp['data']['time'][st]/sampling_rate * pq.s
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
-                ['clu ' + str(ci['cluster_id'])]['spk']['t_stop'] = timestamp[-1]/1e9 * pq.s
+                ['clu ' + str(ci['cluster_id'])]['spk']['t_stop'] = timestamp['data']['time'][-1]/sampling_rate * pq.s
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
-                ['clu ' + str(ci['cluster_id'])]['spk']['t_start'] = timestamp[0]/1e9 * pq.s
+                ['clu ' + str(ci['cluster_id'])]['spk']['t_start'] = timestamp['data']['time'][0]/sampling_rate * pq.s
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
                 ['clu ' + str(ci['cluster_id'])]['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
@@ -139,7 +137,10 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
     
 
 def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):    
-    InputData = copy.deepcopy(data_template)
+    tcr_path = [i for i in os.listdir(rec_file) if 'kilosort' in i][0]
+    tcr_name_list = os.listdir(os.path.join(raw_dirname, rec_file, tcr_path))
+    data_name = [i for i in tcr_name_list if 'group0.dat' in i][0]
+    InputData = copy.deepcopy(Template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
     InputData['SBP'] = 'null'
@@ -150,44 +151,50 @@ def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, 
 
     # a = np.memmap(os.path.join(raw_dirname, rec_file, tcr_path,data_name), dtype=np.int16, mode='r+').reshape((-1,1024))
 
-    fs, lowcut, highcut = bandpass_params
-    # fs = 30000.0
-    # lowcut = 300.0
-    # highcut = 6000.0
+    spk_path = [i for i in os.listdir(rec_file) if 'spikeband' in i][0]
+    spk_name_list = os.listdir(os.path.join(raw_dirname, rec_file,spk_path))
 
-    for i in os.listdir(sorter_output_path):
+    for i in tqdm(spk_name_list):
+        data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dirname, rec_file,spk_path,i))
+        # sbp_time = data
+        des = {}
+        for des_key in data:
+            if 'data' == des_key:
+                continue
+            des[des_key] = data[des_key]
         
-        shank_ind = i.split("_")[2]
-        p = probegroup.probes[int(shank_ind)]
+        if 'timestamps' in i:
+            continue
+            
+        f_ch = data['data']['voltage']
+        chn = float(i.split('_')[-1][2:-7])
+        ch1_mad = scipy.stats.median_abs_deviation(f_ch)
+        thred = np.median(f_ch)-(3.5/0.6745)*ch1_mad
+        peaks, _ = find_peaks(-f_ch, height=-thred)
+        ind=np.array([peaks-24+i for i in range(64)]).T
+        ch_spike = f_ch[ind[1:-100]]
         
-        for ch_ind, chn in tqdm(enumerate(p.device_channel_indices)):
+        spike_description = {'clu':0.0,
+                            'chn':chn,
+                            'mean_waveform':ch_spike.mean(0).astype(float),
+                            'pos' : probe_2d.contact_positions[int(chn)-1],
+                            'electrode' : float(1),
+                            'annotations' : '',
+                            'chn_meta' : des}
+        
+        sampling_rate = int(sbp_time['clockrate'])
+        
+        if not str(chn) in InputData['TCR']:
+            InputData['TCR'][str(chn)] = {}
             
-            f_ch = butter_bandpass_filter(data[:,chn], lowcut, highcut, fs, order=5)
-            ch1_mad = scipy.stats.median_abs_deviation(f_ch)
-            thred = np.median(f_ch)-(3.5/0.6745)*ch1_mad
-            peaks, _ = find_peaks(-f_ch, height=-thred)
-            ind=np.array([peaks-24+i for i in range(64)]).T
-            ch_spike = f_ch[ind[1:-10]]
-            
-            spike_description = {'clu':0.0,
-                                 'chn':float(chn),
-                                 'mean_waveform':ch_spike.mean(0).astype(float),
-                                 'pos' : p.contact_positions[ch_ind],
-                                 'electrode' : float(shank_ind),
-                                 'annotations' : '',
-                                 'chn_meta' : ''}
-            sampling_rate = 30000.0
-            ptp_t = timestamp[peaks]/1e9
-            
-            if not str(chn) in InputData['TCR']:
-                InputData['TCR'][str(chn)] = {}
-            InputData['TCR'][str(chn)]['0'] = {}
-            InputData['TCR'][str(chn)]['0']['spk'] = templat_neo['spk'].copy()
-            InputData['TCR'][str(chn)]['0']['spk']['times'] = ptp_t * pq.s
-            InputData['TCR'][str(chn)]['0']['spk']['t_stop'] = timestamp[-1]/1e9 * pq.s
-            InputData['TCR'][str(chn)]['0']['spk']['t_start'] = timestamp[0]/1e9 * pq.s
-            InputData['TCR'][str(chn)]['0']['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
-            InputData['TCR'][str(chn)]['0']['spk']['description'] = spike_description
+        InputData['TCR'][str(chn)]['0'] = {}
+        InputData['TCR'][str(chn)]['0']['spk'] = templat_neo['spk'].copy()
+        InputData['TCR'][str(chn)]['0']['spk']['times'] = sbp_time['data']['time'][peaks]/sampling_rate * pq.s
+        InputData['TCR'][str(chn)]['0']['spk']['t_stop'] = sbp_time['data']['time'][-1]/sampling_rate * pq.s
+        InputData['TCR'][str(chn)]['0']['spk']['t_start'] = sbp_time['data']['time'][0]/sampling_rate * pq.s
+        InputData['TCR'][str(chn)]['0']['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
+        InputData['TCR'][str(chn)]['0']['spk']['description'] = spike_description
+
     return InputData
 
 
@@ -271,10 +278,26 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
     
     # load probe
-    probegroup = get_probe(map_path)
+    probegroup = read_probeinterface('/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller/nezha-gai.json')
     
-    # get timestamps
-    data, timestamp = get_timestamp(os.path.join(root_dir, 'raw_data'))
+    # get data path
+    global rec_dir, spikeband_path, spikeband_files, time_file, timestamp
+    try:
+        walk_file = [j for j in os.walk(root_dir)]
+        for f_l in walk_file:
+            rec_name = [f_n for f_n in f_l[2] if '.rec' in f_n]
+            if len(rec_name) !=0:
+                break
+        rec_dir = f_l[0]
+    except:
+        sys.exit()
+    
+    spikeband_path = [i for i in os.listdir(rec_dir) if 'spikeband' in i][0]
+    spikeband_files = os.listdir(os.path.join(rec_dir, spikeband_path))
+    time_file = [t for t in spikeband_files if 'timestamps' in t][0]
+    timestamp = trodesReader.readTrodesExtractedDataFile(os.path.join(rec_dir, spikeband_path, time_file))
+    
+    
 
     # get sorter_output path
     sorter = sorter.lower()
@@ -346,4 +369,3 @@ parser.add_argument('-mp', '--map_path',
 args = parser.parse_args()
 
 format_file(args.root, args.map_path, args.output)        
-        

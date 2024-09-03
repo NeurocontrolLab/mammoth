@@ -6,35 +6,55 @@ Created on Sun Feb 14 22:03:01 2021
 @author: cuilab
 """
 
-import os
-import yaml
-import copy
-from tqdm import tqdm
-import scipy
-from scipy.signal import butter, lfilter, find_peaks
-import numpy as np
-import pandas as pd
-import brpylib
+
+import neo
+import joblib
 import argparse
 import quantities as pq
+import glob
+import os
+from neo import io
+import yaml
+import copy
+import numpy as np
+import sys
+from tqdm import tqdm
+import pandas as pd
+import brpylib
+from scipy.signal import butter, lfilter, find_peaks
+import scipy
 from user_input_entry import BRShare as bs
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
-from get_probe import get_probe
+from get_probe_bohr_utah96 import get as get_probe
 
 
-#%% define functions
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    return butter(order, [lowcut, highcut], fs=fs, btype='band')
+def format_file(root_dir, map_path, output_dir):
+    #%% load template
+    FILEPATH = os.path.dirname(os.path.abspath(__file__))
+    Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
+    Template['LFP'] = templat_neo['ana']
+    Template['RecordingSystemEvent'] = templat_neo['event']
+    Template['Spike'] = {'SorterName' : {}, 'kargs' : {}}
 
 
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
+    #%% load probe
+    probegroup = get_probe(map_path)
 
 
-def get_timestamp(root_dir):
+    #%% define bandpass functions
+    def butter_bandpass(lowcut, highcut, fs, order=5):
+        return butter(order, [lowcut, highcut], fs=fs, btype='band')
+
+    def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+        b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+        y = lfilter(b, a, data)
+        return y
+
+
+    #%% Load timestamps
+    InputList = []
+
     walk_file = [j for j in os.walk(root_dir)]
 
     for f_l in walk_file:
@@ -54,34 +74,31 @@ def get_timestamp(root_dir):
     data = np.concatenate(cont_data['data'],1).T
     timestamp = np.concatenate([i['Timestamp'] for i in cont_data['data_headers']])
 
-    return data, timestamp
-
-
-def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):
-    InputData = copy.deepcopy(data_template)
+    #%% convert Spike
+    InputData = copy.deepcopy(Template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['TCR'] = 'null'
     InputData['SBP'] = 'null'
     InputData['LFP'] = 'null'
 
-    InputData['name'] = sorter_output_path.split(os.sep)[-1].lower().replace('_', '.')
+    InputData['name'] = 'kilosort2.5'
     InputData['Spike'] = {}
 
-    fs, lowcut, highcut = bandpass_params
-    # fs = 30000.0
-    # lowcut = 300.0
-    # highcut = 6000.0
+    fs = 30000.0
+    lowcut = 300.0
+    highcut = 6000.0
 
-    # check if cluster_info.tsv exists
-    for i in os.listdir(sorter_output_path):
-        data_path = os.path.join(sorter_output_path, i, 'sorter_output')
+    kilo_path = os.path.join(root_dir,'sorted_data','kilosort2_5_output')
+
+    for i in os.listdir(kilo_path):
+        data_path = os.path.join(kilo_path, i, 'sorter_output')
         assert os.path.exists(os.path.join(data_path, 'cluster_info.tsv')), "cannot find cluster info"
-
-    # assemble data    
-    for i in os.listdir(sorter_output_path):
+        
+    for i in os.listdir(kilo_path):
+        
         shank_ind = i.split("_")[2]
-        data_path = os.path.join(sorter_output_path, i, 'sorter_output')
-        cluster_info = pd.read_csv(os.path.join(data_path, 'cluster_info.tsv'), sep="\t")
+        data_path = os.path.join(kilo_path, i, 'sorter_output')
+        cluster_info = pd.read_csv(os.path.join(data_path, 'cluster_info.tsv'),sep="\t")
         spike_times = np.load(os.path.join(data_path, 'spike_times.npy')).squeeze()
         spike_clusters = np.load(os.path.join(data_path, 'spike_clusters.npy')).squeeze()
         #whitened_data = np.array(np.memmap(os.path.join(data_path, 'temp_wh.dat'),mode='r',dtype=np.int16).reshape((-1,96)))
@@ -91,10 +108,8 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
         for clu in tqdm(np.unique(spike_clusters)):
             ind = np.where(cluster_info.cluster_id==clu)[0][0]
             ci = cluster_info.iloc[ind].to_dict()
-            st = spike_times[spike_clusters==clu]
-            # choose 24 sampling points before and 40, sampling rate = 30k Hz
-            # => [-0.5ms, +1 ms], referring to WaveClus
-            swi = [st-24+i for i in range(64)]  
+            st = spike_times[spike_clusters==clu][0:-1]
+            swi = [st-24+i for i in range(64)]
             bch = p.device_channel_indices[ci['ch']]
             
             # mean_waveform = whitened_data[:,ci['ch']][swi].squeeze().mean(1).astype(float)
@@ -102,17 +117,17 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
             if not 'good' == ci['group']:
                 continue
             
-            f_ch = butter_bandpass_filter(data[:, bch], lowcut, highcut, fs, order=5)
+            f_ch = butter_bandpass_filter(data[:,bch], lowcut, highcut, fs, order=5)
             mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
             # mean_waveform = data[swi,bch].squeeze().mean(1).astype(float)
             
-            spike_description = {'clu': float(ci['cluster_id']),
-                                 'chn': float(bch),
-                                 'mean_waveform': mean_waveform,
-                                 'pos': p.contact_positions[ci['ch']],
-                                 'electrode': float(shank_ind),
-                                 'annotations': '',
-                                 'chn_meta': ci}
+            spike_description = {'clu':float(ci['cluster_id']),
+                                'chn':float(bch),
+                                'mean_waveform':mean_waveform,
+                                'pos' : p.contact_positions[ci['ch']],
+                                'electrode' : float(shank_ind),
+                                'annotations' : '',
+                                'chn_meta' : ci}
             sampling_rate = 30000
             
             ptp_t = timestamp[st]/1e9
@@ -134,12 +149,11 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
                 ['clu ' + str(ci['cluster_id'])]['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
                 ['clu ' + str(ci['cluster_id'])]['spk']['description'] = spike_description
-        
-        return InputData
-    
 
-def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):    
-    InputData = copy.deepcopy(data_template)
+    InputList.append(InputData)
+
+    #%% convert TCR
+    InputData = copy.deepcopy(Template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
     InputData['SBP'] = 'null'
@@ -150,12 +164,11 @@ def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, 
 
     # a = np.memmap(os.path.join(raw_dirname, rec_file, tcr_path,data_name), dtype=np.int16, mode='r+').reshape((-1,1024))
 
-    fs, lowcut, highcut = bandpass_params
-    # fs = 30000.0
-    # lowcut = 300.0
-    # highcut = 6000.0
+    fs = 30000.0
+    lowcut = 300.0
+    highcut = 6000.0
 
-    for i in os.listdir(sorter_output_path):
+    for i in os.listdir(kilo_path):
         
         shank_ind = i.split("_")[2]
         p = probegroup.probes[int(shank_ind)]
@@ -170,12 +183,12 @@ def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, 
             ch_spike = f_ch[ind[1:-10]]
             
             spike_description = {'clu':0.0,
-                                 'chn':float(chn),
-                                 'mean_waveform':ch_spike.mean(0).astype(float),
-                                 'pos' : p.contact_positions[ch_ind],
-                                 'electrode' : float(shank_ind),
-                                 'annotations' : '',
-                                 'chn_meta' : ''}
+                                'chn':float(chn),
+                                'mean_waveform':ch_spike.mean(0).astype(float),
+                                'pos' : p.contact_positions[ch_ind],
+                                'electrode' : float(shank_ind),
+                                'annotations' : '',
+                                'chn_meta' : ''}
             sampling_rate = 30000.0
             ptp_t = timestamp[peaks]/1e9
             
@@ -188,10 +201,10 @@ def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, 
             InputData['TCR'][str(chn)]['0']['spk']['t_start'] = timestamp[0]/1e9 * pq.s
             InputData['TCR'][str(chn)]['0']['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
             InputData['TCR'][str(chn)]['0']['spk']['description'] = spike_description
-    return InputData
+        
+    InputList.append(InputData)
 
-
-def convert_LFP(root_dir, data_template):
+    #%% convert LFP
     walk_file = [j for j in os.walk(root_dir)]
 
     for f_l in walk_file:
@@ -212,7 +225,7 @@ def convert_LFP(root_dir, data_template):
     timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
 
     # LFPRecordingParam = blackrock_data.extended_headers
-    InputData = copy.deepcopy(data_template)
+    InputData = copy.deepcopy(Template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
     InputData['SBP'] = 'null'
@@ -224,11 +237,9 @@ def convert_LFP(root_dir, data_template):
     InputData['LFP']['t_start'] = timestamp[0]*pq.s
     InputData['LFP']['description'] = ''
     InputData['name'] = 'LFP'
+    InputList.append(InputData)
 
-    return InputData
-
-
-def convert_RSE(root_dir, data_template):
+    #%% convert RecordingSystemEvent
     walk_file = [j for j in os.walk(root_dir)]
 
     for f_l in walk_file:
@@ -248,7 +259,7 @@ def convert_RSE(root_dir, data_template):
     # data = np.concatenate(lfp_data['data'],1).T
     # timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
         
-    InputData = copy.deepcopy(data_template)   
+    InputData = copy.deepcopy(Template)   
 
     InputData['LFP'] = 'null'
     InputData['Spike'] = 'null'
@@ -261,57 +272,8 @@ def convert_RSE(root_dir, data_template):
     InputData['RecordingSystemEvent']['description'] = ''
     InputData['name'] = 'RecordingSystemEvent'
 
-    return InputData
-
-
-def format_file(root_dir, map_path, output_dir, content_list, sorter):
-    #%% prepare
-    # load template
-    FILEPATH = os.path.dirname(os.path.abspath(__file__))
-    Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
-    
-    # load probe
-    probegroup = get_probe(map_path)
-    
-    # get timestamps
-    data, timestamp = get_timestamp(os.path.join(root_dir, 'raw_data'))
-
-    # get sorter_output path
-    sorter = sorter.lower()
-    if '.' in sorter:
-        sorter = sorter.replace(".", "_")
-    sorter_output_path = os.path.join(root_dir,'sorted_data','{}_output'.format(sorter))
-
-    # set bandpass parameters
-    fs = 30000.0
-    lowcut = 300.0
-    highcut = 6000.0
-    bandpass_params = (fs, lowcut, highcut)
-    
-    # initialize data list
-    InputList = []
-
-    #%% convert Spike
-    if len([i for i in content_list if i.lower()=='spike'])>0:
-        Template['Spike'] = {'SorterName' : {}, 'kargs' : {}}
-        InputData = convert_spike(data, timestamp, sorter_output_path, Template, probegroup, bandpass_params)
-        InputList.append(InputData)
-
-    #%% convert TCR
-    if len([i for i in content_list if i.upper()=='TCR'])>0:
-        InputData = convert_TCR(data, timestamp, sorter_output_path, Template, probegroup, bandpass_params)    
-        InputList.append(InputData)
-
-    #%% convert LFP
-    if len([i for i in content_list if i.upper()=='LFP'])>0:
-        Template['LFP'] = templat_neo['ana']
-        InputData = convert_LFP(os.path.join(root_dir, 'raw_data'), Template)
-        InputList.append(InputData)
-
-    #%% convert RecordingSystemEvent
-    Template['RecordingSystemEvent'] = templat_neo['event']
-    InputData = convert_RSE(os.path.join(root_dir, 'raw_data'), Template)
     InputList.append(InputData)
+
 
     #%% operate the dicts
     neuralblock = bs.data_input(user_data = InputList, index = 1, name = 'neural_data')
