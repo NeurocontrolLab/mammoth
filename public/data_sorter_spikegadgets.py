@@ -12,35 +12,12 @@ import numpy as np
 from tqdm import tqdm
 import spikeinterface.extractors as se
 import spikeinterface.sorters as ss
-from probeinterface import Probe, ProbeGroup
 from probeinterface import read_probeinterface
 
 
-def sorting(root_dir, map_path, output_dir, container_dir):
+def sorting(sorter, root_dir, map_path, output_dir, container_dir):
     #%% load probe
-    probegroup2 = read_probeinterface(map_path) # read probe json
-
-    pos_list = []
-    shapes_list = []
-    shape_params_list = []
-    probe_2d = Probe(ndim=2, si_units='um')
-
-    # reset channel postion
-    for ind, i in enumerate(probegroup2.probes):
-        pos = i.contact_positions[:,[0,2]].copy()
-        pos[:,-1] = pos[:,-1]*-1+10*400*ind
-        sha_par = i.contact_shape_params
-        pos_list.extend(list(pos.copy()))
-        shapes_list.extend(i.contact_shapes)
-        shape_params_list.extend(sha_par)
-        
-    # build probe instance
-    probe_2d.set_contacts(positions=pos_list, 
-                          shapes=shapes_list, 
-                          shape_params=shape_params_list)
-
-    # set device
-    probe_2d.set_device_channel_indices(np.arange(0, 1024))
+    probegroup = read_probeinterface(map_path) # read probe json
     
     #%% perform sorting
     # find .rec file
@@ -66,11 +43,12 @@ def sorting(root_dir, map_path, output_dir, container_dir):
     # build recording instance for sorting
     recording = se.BinaryRecordingExtractor(kilo_path,
                                             sampling_frequency=30000,
-                                            dtype=np.int16,num_channels=1024)
-    recording = recording.set_probe(probe_2d)
+                                            dtype=np.int16,
+                                            num_channels=int(len(probegroup.probes[-1].shank_ids)*len(probegroup.probes)))
+    recording = recording.set_probegroup(probegroup)
 
     # make folder for kilo data saving
-    data_path_ = os.path.join(output_dir, 'kilosort2_5_output')
+    data_path_ = os.path.join(output_dir, '{}_output'.format(sorter))
 
     if not os.path.exists(data_path_):
         os.makedirs(data_path_)
@@ -78,15 +56,15 @@ def sorting(root_dir, map_path, output_dir, container_dir):
     os.chdir(container_dir)
     wrong_flag = 0
     # slice recorded data to shank for sorting
-    for ind, border in tqdm(enumerate(range(0, 1024, 128))):
-        sp = os.path.join(data_path_, "kilo_shank_{}".format(ind))
-        sliced_recording = recording.channel_slice(list(range(border, border+128)))
+    for ind, p in tqdm(enumerate(probegroup.probes)):
+        sp = os.path.join(data_path_, "{}_shank_{}".format(sorter[:4], ind))
+        sliced_recording = recording.channel_slice(list(p.device_channel_indices))
         
         if os.path.exists(sp):
             continue
         
         try:
-            sorting = ss.run_sorter(sorter_name='kilosort2_5',
+            sorting = ss.run_sorter(sorter_name=sorter,
                                     recording=sliced_recording,     
                                     output_folder=sp,
                                     singularity_image=True,
@@ -94,7 +72,6 @@ def sorting(root_dir, map_path, output_dir, container_dir):
                                     delete_tmp_files=False,
                                     delete_recording_dat = True,
                                     n_jobs = 12)
-                                    #NT=64*256+64)
         except:
             os.rename(sp,sp+'_wrong') # if something wrong happened, change the folder name
             wrong_flag += 1
@@ -108,11 +85,7 @@ def sorting(root_dir, map_path, output_dir, container_dir):
 
 
 #%%
-parser = argparse.ArgumentParser(
-    prog = 'Nezha kilosort 2.5 pipeline', 
-    description = 'Using 1024 flexible array with spikegadgets recording system',
-    epilog = 'Neucyber-NC-2023-A-01'
-)
+parser = argparse.ArgumentParser()
 
 parser.add_argument('-r', '--root', 
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001')

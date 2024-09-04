@@ -11,6 +11,7 @@ import subprocess
 # trodes and trodesexport are necessary
 
 def convert_file(data_dir):
+    # only for Spikegadgets
     command = """dir='{}'
     if ! find $dir -type d -name "*kilosort" | read; then
       echo "convert .rec files"

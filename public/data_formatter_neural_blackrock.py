@@ -7,6 +7,7 @@ Created on Sun Feb 14 22:03:01 2021
 """
 
 import os
+import sys
 import yaml
 import copy
 from tqdm import tqdm
@@ -37,11 +38,14 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
 def get_timestamp(root_dir):
     walk_file = [j for j in os.walk(root_dir)]
 
-    for f_l in walk_file:
-        rec_name = [f_n for f_n in f_l[2] if '.ns6' in f_n]
-        if len(rec_name) !=0:
-            break
-    datafile = os.path.join(f_l[0], rec_name[0])
+    try:
+        for f_l in walk_file:
+            rec_name = [f_n for f_n in f_l[2] if '.ns6' in f_n]
+            if len(rec_name) !=0:
+                break
+        datafile = os.path.join(f_l[0], rec_name[0])
+    except:
+        sys.exit()
 
     nsx_file = brpylib.NsxFile(str(datafile))
 
@@ -198,18 +202,41 @@ def convert_LFP(root_dir, data_template):
         rec_name = [f_n for f_n in f_l[2] if '.ns2' in f_n]
         if len(rec_name) !=0:
             break
-    datafile = os.path.join(f_l[0], rec_name[0])
+    
+    if len(rec_name) >0:
+        
+        datafile = os.path.join(f_l[0], rec_name[0])
 
-    lfp_file = brpylib.NsxFile(str(datafile))
+        lfp_file = brpylib.NsxFile(str(datafile))
 
-    # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
-    lfp_data = lfp_file.getdata(full_timestamps=True)
+        # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
+        lfp_data = lfp_file.getdata(full_timestamps=True)
 
-    # Close the nsx file now that all data is out
-    lfp_file.close()
+        # Close the nsx file now that all data is out
+        lfp_file.close()
 
-    data = np.concatenate(lfp_data['data'],1).T
-    timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
+        data = np.concatenate(lfp_data['data'], 1).T
+        timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
+    
+    else:
+        for f_l in walk_file:
+            rec_name = [f_n for f_n in f_l[2] if '.ns6' in f_n]
+            if len(rec_name) !=0:
+                break
+
+        datafile = os.path.join(f_l[0], rec_name[0])
+
+        raw_file = brpylib.NsxFile(str(datafile))
+
+        lfp_data = raw_file.getdata(downsample=15)
+        # Note: .ns3 file only from 0.3-250 Hz
+        # ButterWorthFilter lowpass and highpass
+
+        raw_file.close()
+
+        data = np.concatenate(lfp_data['data'], 1).T
+        timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
+
 
     # LFPRecordingParam = blackrock_data.extended_headers
     InputData = copy.deepcopy(data_template)
@@ -249,7 +276,6 @@ def convert_RSE(root_dir, data_template):
     # timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
         
     InputData = copy.deepcopy(data_template)   
-
     InputData['LFP'] = 'null'
     InputData['Spike'] = 'null'
     InputData['TCR'] = 'null'
@@ -273,8 +299,21 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     # load probe
     probegroup = get_probe(map_path)
     
+    # get raw data path
+    try:
+        walk_file = [j for j in os.walk(root_dir)]
+        for f_l in walk_file:
+            rec_name = [f_n for f_n in f_l[2] if '.ns6' in f_n]
+            if len(rec_name) !=0:
+                break
+        rec_dir = f_l[0]
+    except:
+        sys.exit()
+    
+    raw_dir = os.path.join(root_dir, rec_dir)
+
     # get timestamps
-    data, timestamp = get_timestamp(os.path.join(root_dir, 'raw_data'))
+    data, timestamp = get_timestamp(raw_dir)
 
     # get sorter_output path
     sorter = sorter.lower()
@@ -305,12 +344,12 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     #%% convert LFP
     if len([i for i in content_list if i.upper()=='LFP'])>0:
         Template['LFP'] = templat_neo['ana']
-        InputData = convert_LFP(os.path.join(root_dir, 'raw_data'), Template)
+        InputData = convert_LFP(raw_dir, Template)
         InputList.append(InputData)
 
     #%% convert RecordingSystemEvent
     Template['RecordingSystemEvent'] = templat_neo['event']
-    InputData = convert_RSE(os.path.join(root_dir, 'raw_data'), Template)
+    InputData = convert_RSE(raw_dir, Template)
     InputList.append(InputData)
 
     #%% operate the dicts

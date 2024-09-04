@@ -26,40 +26,7 @@ from SmartNeo.interface_layer.nwb_interface import NWBInterface
 
 
 #%% define functions
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    return butter(order, [lowcut, highcut], fs=fs, btype='band')
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-
-def get_timestamp(root_dir):
-    walk_file = [j for j in os.walk(root_dir)]
-
-    for f_l in walk_file:
-        rec_name = [f_n for f_n in f_l[2] if '.ns6' in f_n]
-        if len(rec_name) !=0:
-            break
-    datafile = os.path.join(f_l[0], rec_name[0])
-
-    nsx_file = brpylib.NsxFile(str(datafile))
-
-    # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
-    cont_data = nsx_file.getdata(full_timestamps=True)
-
-    # Close the nsx file now that all data is out
-    nsx_file.close()
-
-    data = np.concatenate(cont_data['data'],1).T
-    timestamp = np.concatenate([i['Timestamp'] for i in cont_data['data_headers']])
-
-    return data, timestamp
-
-
-def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):
+def convert_spike(raw_dir, sorter_output_path, data_template, probegroup):
     InputData = copy.deepcopy(data_template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['TCR'] = 'null'
@@ -69,10 +36,10 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
     InputData['name'] = sorter_output_path.split(os.sep)[-1].lower().replace('_', '.') 
     InputData['Spike'] = {}
 
-    fs, lowcut, highcut = bandpass_params
-    # fs = 30000.0
-    # lowcut = 300.0
-    # highcut = 6000.0
+    spikeband_path = [i for i in os.listdir(raw_dir) if 'spikeband' in i][0]
+    spikeband_files = os.listdir(os.path.join(raw_dir, spikeband_path))
+    time_file = [t for t in spikeband_files if 'timestamps' in t][0]
+    timestamp = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, spikeband_path, time_file))
 
     # check if cluster_info.tsv exists
     for i in os.listdir(sorter_output_path):
@@ -106,12 +73,12 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
             mean_waveform = data['data']['voltage'][swi].squeeze().mean(1).astype(float)
             
             spike_description = {'clu':float(ci['cluster_id']),
-                                'chn':float(p.device_channel_indices[ci['ch']+int(shank_ind)*128]),
-                                'mean_waveform':mean_waveform,
-                                'pos' : p.contact_positions[ci['ch']+int(shank_ind)*128],
-                                'electrode' : float(shank_ind),
-                                'annotations' : '',
-                                'chn_meta' : ci}
+                                 'chn':float(p.device_channel_indices[ci['ch']]),
+                                 'mean_waveform':mean_waveform,
+                                 'pos' : p.contact_positions[ci['ch']],
+                                 'electrode' : float(shank_ind),
+                                 'annotations' : '',
+                                 'chn_meta' : ci}
             
             sampling_rate = int(timestamp['clockrate'])
             if not 'shank ' + shank_ind in InputData['Spike']:
@@ -136,11 +103,8 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
         return InputData
     
 
-def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):    
-    tcr_path = [i for i in os.listdir(rec_file) if 'kilosort' in i][0]
-    tcr_name_list = os.listdir(os.path.join(raw_dirname, rec_file, tcr_path))
-    data_name = [i for i in tcr_name_list if 'group0.dat' in i][0]
-    InputData = copy.deepcopy(Template)
+def convert_TCR(raw_dir, sorter_output_path, data_template, probegroup):    
+    InputData = copy.deepcopy(data_template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
     InputData['SBP'] = 'null'
@@ -149,75 +113,58 @@ def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, 
     InputData['name'] = 'TCR'
     InputData['TCR'] = {}
 
-    # a = np.memmap(os.path.join(raw_dirname, rec_file, tcr_path,data_name), dtype=np.int16, mode='r+').reshape((-1,1024))
+    spikeband_path = [i for i in os.listdir(raw_dir) if 'spikeband' in i][0]
+    spikeband_files = os.listdir(os.path.join(raw_dir, spikeband_path))
+    time_file = [t for t in spikeband_files if 'timestamps' in t][0]
+    timestamp = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, spikeband_path, time_file))
 
-    spk_path = [i for i in os.listdir(rec_file) if 'spikeband' in i][0]
-    spk_name_list = os.listdir(os.path.join(raw_dirname, rec_file,spk_path))
+    for i in os.listdir(sorter_output_path):
+        shank_ind = i.split("_")[2]
+        p = probegroup.probes[int(shank_ind)]
 
-    for i in tqdm(spk_name_list):
-        data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dirname, rec_file,spk_path,i))
-        # sbp_time = data
-        des = {}
-        for des_key in data:
-            if 'data' == des_key:
-                continue
-            des[des_key] = data[des_key]
-        
-        if 'timestamps' in i:
-            continue
+        for dev_ch in p.device_channel_indices:
+            spk_data_name = [ch_name for ch_name in spikeband_files if str(dev_ch+1) == ch_name.split('_')[-1][2:-7]][0]
+            data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, spikeband_path, spk_data_name))
+            # sbp_time = data
+            des = {}
+            for des_key in data:
+                if 'data' == des_key:
+                    continue
+                des[des_key] = data[des_key]
+                
+            f_ch = data['data']['voltage']
+            chn = dev_ch+1
+            ch1_mad = scipy.stats.median_abs_deviation(f_ch)
+            thred = np.median(f_ch)-(3.5/0.6745)*ch1_mad
+            peaks, _ = find_peaks(-f_ch, height=-thred)
+            ind=np.array([peaks-24+i for i in range(64)]).T
+            ch_spike = f_ch[ind[1:-100]]
             
-        f_ch = data['data']['voltage']
-        chn = float(i.split('_')[-1][2:-7])
-        ch1_mad = scipy.stats.median_abs_deviation(f_ch)
-        thred = np.median(f_ch)-(3.5/0.6745)*ch1_mad
-        peaks, _ = find_peaks(-f_ch, height=-thred)
-        ind=np.array([peaks-24+i for i in range(64)]).T
-        ch_spike = f_ch[ind[1:-100]]
-        
-        spike_description = {'clu':0.0,
-                            'chn':chn,
-                            'mean_waveform':ch_spike.mean(0).astype(float),
-                            'pos' : probe_2d.contact_positions[int(chn)-1],
-                            'electrode' : float(1),
-                            'annotations' : '',
-                            'chn_meta' : des}
-        
-        sampling_rate = int(sbp_time['clockrate'])
-        
-        if not str(chn) in InputData['TCR']:
-            InputData['TCR'][str(chn)] = {}
+            spike_description = {'clu':0.0,
+                                 'chn':dev_ch,
+                                 'mean_waveform':ch_spike.mean(0).astype(float),
+                                 'pos' : p.contact_positions[int(chn)-1],
+                                 'electrode' : float(1),
+                                 'annotations' : '',
+                                 'chn_meta' : des}
             
-        InputData['TCR'][str(chn)]['0'] = {}
-        InputData['TCR'][str(chn)]['0']['spk'] = templat_neo['spk'].copy()
-        InputData['TCR'][str(chn)]['0']['spk']['times'] = sbp_time['data']['time'][peaks]/sampling_rate * pq.s
-        InputData['TCR'][str(chn)]['0']['spk']['t_stop'] = sbp_time['data']['time'][-1]/sampling_rate * pq.s
-        InputData['TCR'][str(chn)]['0']['spk']['t_start'] = sbp_time['data']['time'][0]/sampling_rate * pq.s
-        InputData['TCR'][str(chn)]['0']['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
-        InputData['TCR'][str(chn)]['0']['spk']['description'] = spike_description
+            sampling_rate = int(timestamp['clockrate'])
+            
+            if not str(chn) in InputData['TCR']:
+                InputData['TCR'][str(chn)] = {}
+                
+            InputData['TCR'][str(chn)]['0'] = {}
+            InputData['TCR'][str(chn)]['0']['spk'] = templat_neo['spk'].copy()
+            InputData['TCR'][str(chn)]['0']['spk']['times'] = timestamp['data']['time'][peaks]/sampling_rate * pq.s
+            InputData['TCR'][str(chn)]['0']['spk']['t_stop'] = timestamp['data']['time'][-1]/sampling_rate * pq.s
+            InputData['TCR'][str(chn)]['0']['spk']['t_start'] = timestamp['data']['time'][0]/sampling_rate * pq.s
+            InputData['TCR'][str(chn)]['0']['spk']['sampling_rate'] = float(sampling_rate) * pq.Hz
+            InputData['TCR'][str(chn)]['0']['spk']['description'] = spike_description
 
     return InputData
 
 
-def convert_LFP(root_dir, data_template):
-    walk_file = [j for j in os.walk(root_dir)]
-
-    for f_l in walk_file:
-        rec_name = [f_n for f_n in f_l[2] if '.ns2' in f_n]
-        if len(rec_name) !=0:
-            break
-    datafile = os.path.join(f_l[0], rec_name[0])
-
-    lfp_file = brpylib.NsxFile(str(datafile))
-
-    # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
-    lfp_data = lfp_file.getdata(full_timestamps=True)
-
-    # Close the nsx file now that all data is out
-    lfp_file.close()
-
-    data = np.concatenate(lfp_data['data'],1).T
-    timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
-
+def convert_LFP(raw_dir, data_template):
     # LFPRecordingParam = blackrock_data.extended_headers
     InputData = copy.deepcopy(data_template)
     InputData['RecordingSystemEvent'] = 'null'
@@ -225,47 +172,94 @@ def convert_LFP(root_dir, data_template):
     InputData['SBP'] = 'null'
     InputData['TCR'] = 'null'
 
+    lfp_path = [i for i in os.listdir(raw_dir) if 'LFP' in i][0]
+    lfp_name_list = os.listdir(os.path.join(raw_dir, lfp_path))
+    
+    des_list = []
+    data_list = []
+    for i in tqdm(lfp_name_list):
+        data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, lfp_path, i))
+        des = {}
+        for des_key in data:
+            if 'data' == des_key:
+                continue
+            des[des_key] = data[des_key]
+        
+        if 'timestamps' in i:
+            data_time = data
+            continue
+        des_list.append(des)
+        key = data['data'].dtype.names[0]
+        data_list.append(data['data'][key])
+        assert len(data['data'].dtype.names)==1, 'too many key'
+
+    cutoff = min([len(i) for i in data_list])
+    for i,j in zip(des_list, data_list):
+        i['cutoff'] = len(j)-cutoff
+    data_list = [i[0:cutoff] for i in data_list]
+
     InputData['LFP'] = templat_neo['irr'].copy()
-    InputData['LFP']['signal'] = data*pq.uV
-    InputData['LFP']['times'] = timestamp*pq.s
-    InputData['LFP']['t_start'] = timestamp[0]*pq.s
-    InputData['LFP']['description'] = ''
+    InputData['LFP']['signal'] = np.array(data_list).T*pq.uV
+    InputData['LFP']['times'] = data_time['data']['time'][0:cutoff]/int(data_time['clockrate'])*pq.s
+    InputData['LFP']['t_start'] = 0*pq.s
+    InputData['LFP']['description'] = des_list
     InputData['name'] = 'LFP'
 
     return InputData
 
 
-def convert_RSE(root_dir, data_template):
-    walk_file = [j for j in os.walk(root_dir)]
+def convert_RSE(raw_dir, data_template):
+    event_path = [i for i in os.listdir(raw_dir) if 'DIO' in i][0]
+    event_name_list = os.listdir(os.path.join(raw_dir, event_path))
+    
+    des_list = []
+    data_list = []
+    time_list = []
+    for i in sorted(event_name_list):
+        data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, event_path, i))
+        des = {}
+        for des_key in data:
+            if 'data' == des_key:
+                continue
+            des['des_key'] = data[des_key]
+        des_list.append(des)
+        
+        if 'timestamps' in i:
+            continue
 
-    for f_l in walk_file:
-        rec_name = [f_n for f_n in f_l[2] if ('.nev' in f_n) and ('NSP' in f_n)]
-        if len(rec_name) !=0:
-            break
-    datafile = os.path.join(f_l[0], rec_name[0])
-
-    nev_file = brpylib.NevFile(str(datafile))
-
-    # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
-    nsp_data = nev_file.getdata()
-
-    # Close the nsx file now that all data is out
-    nev_file.close()
-
-    # data = np.concatenate(lfp_data['data'],1).T
-    # timestamp = np.concatenate([i['Timestamp'] for i in lfp_data['data_headers']])/1e9
+        data_list.append(data['data']['state'])
+        time_list.append(data['data']['time'])
+        assert len(data['data'].dtype.names)==2, 'too many key'
         
     InputData = copy.deepcopy(data_template)   
-
     InputData['LFP'] = 'null'
     InputData['Spike'] = 'null'
     InputData['TCR'] = 'null'
     InputData['SBP'] = 'null'
 
-    ptp_t = np.array(nsp_data['digital_events']['TimeStamps'])/1e9
-    InputData['RecordingSystemEvent']['times'] = ptp_t*pq.sec
-    InputData['RecordingSystemEvent']['labels'] = list(np.array(nsp_data['digital_events']['UnparsedData']).astype('float'))
-    InputData['RecordingSystemEvent']['description'] = ''
+    timeq=np.unique(np.concatenate(time_list))
+    marker=np.zeros((len(timeq),6))
+    marker[0]=[i[0] for i in data_list]
+
+    for i in range(1,len(timeq)):
+        marker[i,:]=marker[i-1,:] 
+        for j in range(6):
+            if timeq[i] in time_list[j]:
+                marker[i,j]=data_list[j][time_list[j]==timeq[i]]   
+
+    marker = marker[1::]
+    # markertime=timeq-timeq[0]
+    markertime=timeq
+    markertime = markertime[1::]
+    marker=np.fliplr(marker)
+
+    bin2dec = lambda x: x.dot(2**np.arange(x.shape[1])[::-1])
+    decmarker=bin2dec(marker)
+    sampling_rate = int(data['clockrate'])
+
+    InputData['RecordingSystemEvent']['times'] = markertime/sampling_rate*pq.sec
+    InputData['RecordingSystemEvent']['labels'] = list(decmarker.astype('float'))
+    InputData['RecordingSystemEvent']['description'] = des_list
     InputData['name'] = 'RecordingSystemEvent'
 
     return InputData
@@ -278,10 +272,9 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
     
     # load probe
-    probegroup = read_probeinterface('/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller/nezha-gai.json')
+    probegroup = read_probeinterface(map_path)
     
     # get data path
-    global rec_dir, spikeband_path, spikeband_files, time_file, timestamp
     try:
         walk_file = [j for j in os.walk(root_dir)]
         for f_l in walk_file:
@@ -292,48 +285,37 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     except:
         sys.exit()
     
-    spikeband_path = [i for i in os.listdir(rec_dir) if 'spikeband' in i][0]
-    spikeband_files = os.listdir(os.path.join(rec_dir, spikeband_path))
-    time_file = [t for t in spikeband_files if 'timestamps' in t][0]
-    timestamp = trodesReader.readTrodesExtractedDataFile(os.path.join(rec_dir, spikeband_path, time_file))
-    
-    
-
+    raw_dir = os.path.join(root_dir, rec_dir)
+     
     # get sorter_output path
     sorter = sorter.lower()
     if '.' in sorter:
         sorter = sorter.replace(".", "_")
     sorter_output_path = os.path.join(root_dir,'sorted_data','{}_output'.format(sorter))
 
-    # set bandpass parameters
-    fs = 30000.0
-    lowcut = 300.0
-    highcut = 6000.0
-    bandpass_params = (fs, lowcut, highcut)
-    
     # initialize data list
     InputList = []
 
     #%% convert Spike
     if len([i for i in content_list if i.lower()=='spike'])>0:
         Template['Spike'] = {'SorterName' : {}, 'kargs' : {}}
-        InputData = convert_spike(data, timestamp, sorter_output_path, Template, probegroup, bandpass_params)
+        InputData = convert_spike(raw_dir, sorter_output_path, Template, probegroup)
         InputList.append(InputData)
 
     #%% convert TCR
     if len([i for i in content_list if i.upper()=='TCR'])>0:
-        InputData = convert_TCR(data, timestamp, sorter_output_path, Template, probegroup, bandpass_params)    
+        InputData = convert_TCR(raw_dir, sorter_output_path, Template, probegroup)    
         InputList.append(InputData)
 
     #%% convert LFP
     if len([i for i in content_list if i.upper()=='LFP'])>0:
         Template['LFP'] = templat_neo['ana']
-        InputData = convert_LFP(os.path.join(root_dir, 'raw_data'), Template)
+        InputData = convert_LFP(raw_dir, Template)
         InputList.append(InputData)
 
     #%% convert RecordingSystemEvent
     Template['RecordingSystemEvent'] = templat_neo['event']
-    InputData = convert_RSE(os.path.join(root_dir, 'raw_data'), Template)
+    InputData = convert_RSE(raw_dir, Template)
     InputList.append(InputData)
 
     #%% operate the dicts
