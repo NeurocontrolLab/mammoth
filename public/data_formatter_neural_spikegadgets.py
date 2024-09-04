@@ -69,7 +69,7 @@ def convert_spike(raw_dir, sorter_output_path, data_template, probegroup):
             
             dev_ch = p.device_channel_indices[ci['ch']]
             spk_data_name = [ch_name for ch_name in spikeband_files if str(dev_ch+1) == ch_name.split('_')[-1][2:-7]][0]
-            data = trodesReader.readTrodesExtractedDataFile(os.path.join(rec_dir, spikeband_path, spk_data_name))
+            data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, spikeband_path, spk_data_name))
             mean_waveform = data['data']['voltage'][swi].squeeze().mean(1).astype(float)
             
             spike_description = {'clu':float(ci['cluster_id']),
@@ -103,7 +103,7 @@ def convert_spike(raw_dir, sorter_output_path, data_template, probegroup):
         return InputData
     
 
-def convert_TCR(raw_dir, sorter_output_path, data_template, probegroup):    
+def convert_TCR(raw_dir, data_template, probegroup):    
     InputData = copy.deepcopy(data_template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
@@ -118,10 +118,7 @@ def convert_TCR(raw_dir, sorter_output_path, data_template, probegroup):
     time_file = [t for t in spikeband_files if 'timestamps' in t][0]
     timestamp = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, spikeband_path, time_file))
 
-    for i in os.listdir(sorter_output_path):
-        shank_ind = i.split("_")[2]
-        p = probegroup.probes[int(shank_ind)]
-
+    for shank_ind, p in enumerate(probegroup.probes):
         for dev_ch in p.device_channel_indices:
             spk_data_name = [ch_name for ch_name in spikeband_files if str(dev_ch+1) == ch_name.split('_')[-1][2:-7]][0]
             data = trodesReader.readTrodesExtractedDataFile(os.path.join(raw_dir, spikeband_path, spk_data_name))
@@ -265,7 +262,7 @@ def convert_RSE(raw_dir, data_template):
     return InputData
 
 
-def format_file(root_dir, map_path, output_dir, content_list, sorter):
+def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
     #%% prepare
     # load template
     FILEPATH = os.path.dirname(os.path.abspath(__file__))
@@ -288,10 +285,16 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     raw_dir = os.path.join(root_dir, rec_dir)
      
     # get sorter_output path
-    sorter = sorter.lower()
-    if '.' in sorter:
-        sorter = sorter.replace(".", "_")
-    sorter_output_path = os.path.join(root_dir,'sorted_data','{}_output'.format(sorter))
+    if len([i for i in content_list if i.lower()=='spike'])>0:
+        if not sorter:
+            print("The data have not yet sorted.")
+            sys.exit()
+
+    if sorter:
+        sorter = sorter.lower()
+        if '.' in sorter:
+            sorter = sorter.replace(".", "_")
+        sorter_output_path = os.path.join(root_dir,'sorted_data','{}_output'.format(sorter))
 
     # initialize data list
     InputList = []
@@ -331,7 +334,7 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
         
     nwb_saver = NWBInterface()
     nwb_saver.save_nwb(blockdata = neuralblock, 
-                       filename = os.path.join(output_dir, 'neural_data.nwb'))
+                       filename = os.path.join(output_dir, '{}.nwb'.format('_'.join(content_list))))
         
 
 #%% parse the input arguments
@@ -348,6 +351,13 @@ parser.add_argument('-o', '--output', type=str,
 parser.add_argument('-mp', '--map_path', 
                     default='/home/cuihe_lab/lichenyang/DATA_AMAX/Neucyber-NC-2023-A-01/Bohr/Spike_sorting/SN+11386-000049.cmp')
 
+parser.add_argument('-cl', '--content_list', 
+                    default="['spike', 'TCR', 'LFP']")
+
+parser.add_argument('-sorter', '--sorter_name', 
+                    default='kilosort2_5')
+
+
 args = parser.parse_args()
 
-format_file(args.root, args.map_path, args.output)        
+format_file(args.root, args.map_path, args.output, args.content_list, args.sorter_name)        

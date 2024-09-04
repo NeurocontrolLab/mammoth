@@ -87,6 +87,9 @@ def sorting(sorter, root_dir, map_path, output_dir, container_dir):
 #%%
 parser = argparse.ArgumentParser()
 
+parser.add_argument('-sorter', '--sorter_name', 
+                    default='kilosort2_5')
+
 parser.add_argument('-r', '--root', 
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001')
 
@@ -101,4 +104,4 @@ parser.add_argument('-cp', '--container',
 
 args = parser.parse_args()
 
-sorting(args.root, args.map_path, args.output, args.container)
+sorting(args.sorter_name, args.root, args.map_path, args.output, args.container)

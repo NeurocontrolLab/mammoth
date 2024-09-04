@@ -59,7 +59,7 @@ This .py file can also be run in a batch script as
 ---
 ## Data converter
 
-This `data_converter.py` aims to convert raw recording files into files more suitable for after processing.
+This `data_converter.py` aims to convert raw recording files into files more suitable for after processing (applying to the SpikeGadgets recording system).
 
 Note: The processing depends on `trodes` and `trodesexport`, which should be installed in advance.
 
@@ -68,7 +68,7 @@ Note: The processing depends on `trodes` and `trodesexport`, which should be ins
 >
 > Returns: None
 
-This function would search for recording files in the 'data_dir' folder automatically and convert the raw files into extended files in different sub folders.
+This function would search for recording files in the 'data_dir' folder automatically and convert the raw files into extended files in different subfolders. The names of these subfolders end with 'DIO', 'kilosort', 'LFP', 'spikeband', 'spikes', and 'timestampoffset', respectively.
 
 This .py file can also be run in a batch script as
 
@@ -124,62 +124,162 @@ This .py file can also be run in a batch script as
 
 ---
 
-### Format unsorted neural data (BlackRock)
+### Format neural data (BlackRock)
 
-This `data_formatter_TCR_blackrock.py` aims to format unsorted neural data into an NWB file. When used, it requires `template_neural_data.yml`, `user_input_entry_collection.py`, and a fit [Get Probe](#get-probe) function.
+This `data_formatter_neural_blackrock.py` aims to format neural data recorded using the BlackRock system into an NWB file. When used, it requires `template_neural_data.yml`, `user_input_entry_collection.py`, and a [get_probe](#get-probe) function.
 
 Note: The ```SmartNeo``` module should be installed in advance.
 
-> *function* **format_file(root_dir, map_path, output_dir)**
+> *function* **butter_bandpass(lowcut, highcut, fs, order=5)**
+> - lowcut (float) - the low border
+> - highcut (float) - the high border
+> - fs (float) - sampling rate
+> - order (int) - order of the filter
+> 
+> Returns: a defined ButterWorth Filter (from scipy) 
+
+> *function* **butter_bandpass_filter(data, lowcut, highcut, fs, order=5)
+> - data (numpy.array) - the data to be filtered
+> - lowcut (float) - the low border
+> - highcut (float) - the high border
+> - fs (float) - sampling rate
+> - order (int) - order of the filter
+> 
+> Returns: results of the ButterWorth Filter
+
+These two functions filter data with a ButterWorth Filter with the help of `scipy`.
+
+> *function* **get_timestamp(root_dir)**
+> - root_dir (str) - the root directory for a session
+>
+> Returns:
+> - data
+> - timestamp
+
+This function searches for and reads the .ns6 file from the 'root_dir', then extracts timestamp information.
+
+> *function* **convert_spike(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params)**
+> - data () - time data extracted from .ns6 file (see above) 
+> - timestamp () - timestamp information extracted from .ns6 file (see above)
+> - sorter_output_path (str) - the path of sorter output
+> - data_template (Template) - the template of data structure 
+> - probegroup (ProbeGroup) - the probe information
+> - bandpass_params (tuple) - the parameters to be used by the bandpass filter
+>
+> Returns: InputData (dict)
+
+This function collects sorted spike data and converts them into a dict according to the given template.
+
+> *function* **convert_TCR(data, timestamp, data_template, probegroup, bandpass_params)**
+> - data () - time data extracted from .ns6 file (see above) 
+> - timestamp () - timestamp information extracted from .ns6 file (see above)
+> - data_template (Template) - the template of data structure 
+> - probegroup (ProbeGroup) - the probe information
+> - bandpass_params (tuple) - the parameters to be used by the bandpass filter
+>
+> Returns: InputData (dict)
+
+This function collects unsorted TCR data and converts them into a dict according to the given template.
+
+> *function* **convert_LFP(root_dir, data_template)**
+> - root_dir (str) - the root directory for a session
+> - data_template (Template) - the template of data structure 
+>
+> Returns: InputData (dict)
+
+This function searches for and read .ns2 or .ns6 files to get LFP data and converts them to a dict according to the given template.
+
+> *function* **convert_RSE(root_dir, data_template)**
+> - root_dir (str) - the root directory for a session
+> - data_template (Template) - the template of data structure 
+>
+> Returns: InputData (dict)
+
+This function searches for and read .nev file to get RecordingSystemEvent data and converts them to a dict according to the given template.
+
+> *function* **format_file(root_dir, map_path, output_dir, content_list, sorter=None)**
 > - root_dir (str) - the root directory for a session
 > - map_path (str) - the path of probe map
 > - output_dir (str) - the target directory to save output results
+> - content_list (list) - a list including wanted data, for example, ['spike', 'TCR', 'LFP'] 
+> - sorter (str) - the sorter's name, for example, 'kilosort2_5'
 >
 > Returns: None
 
-This function would first load probe, then search and load the .ns6 file from the 'root_dir' folder for time stamps, collect TCR and RecordingSystemEvent, and finally output as `neural_data_no_sort.nwb` in the 'output_dir' folder via ```SmartNeo```. The data structure see ```template_neural_data.yml```.
+This function would first load probe and template, then get and convert data using above funtions, finally collect the dicts into a list and output as an NWB file in the 'output_dir' folder via ```SmartNeo```. For example, if the content_list=['spike', 'TCR', 'LFP'], the name of the NWB file would be 'spike_TCR_LFP.nwb'. The RecordingSystemEvent data are always included regardless of the content_list. The data structure see ```template_neural_data.yml```.
 
 This .py file can also be run in a batch script as
 
-```python data_formatter_TCR_blackrock.py -r /the/root/dir -o /the/output/dir -mp /the/map/path``` 
+```python data_formatter_neural_blackrock.py -r /the/root/dir -o /the/output/dir -mp /the/map/path -cl ['spike', 'TCR', 'LFP'] -sorter 'kilosort2_5'``` 
 
 ---
 
-### Format sorted neural data (BlackRock)
+### Format neural data (SpikeGadgets)
 
-This `data_formatter_neural_blackrock.py` aims to format sorted neural data (see [Data sorter](#data-sorter)) into an NWB file. When used, it requires `template_neural_data.yml`, `user_input_entry_collection.py`, and a fit [Get Probe](#get-probe) function.
+This `data_formatter_neural_spikegadgets.py` aims to format neural data recorded using the SpikeGadgets system into an NWB file. When used, it requires `template_neural_data.yml`, `user_input_entry_collection.py`, and a [get_probe](#get-probe) function.
 
 Note: The ```SmartNeo``` module should be installed in advance.
 
-> *function* **format_file(root_dir, map_path, output_dir)**
+> *function* **convert_spike(raw_dir, sorter_output_path, data_template, probegroup)**
+> - raw_dir () - the directory path of the raw recording data 
+> - sorter_output_path (str) - the path of sorter output
+> - data_template (Template) - the template of data structure 
+> - probegroup (ProbeGroup) - the probe information
+>
+> Returns: InputData (dict)
+
+This function collects sorted spike data and converts them into a dict according to the given template.
+
+> *function* **convert_TCR(raw_dir, data_template, probegroup)**
+> - raw_dir () - the directory path of the raw recording data 
+> - data_template (Template) - the template of data structure 
+> - probegroup (ProbeGroup) - the probe information
+>
+> Returns: InputData (dict)
+
+This function read data from the 'spikeband' folder (see [Data converter](#data-converter)) and converts them into a dict according to the given template.
+
+> *function* **convert_LFP(raw_dir, data_template)**
+> - raw_dir () - the directory path of the raw recording data 
+> - data_template (Template) - the template of data structure 
+>
+> Returns: InputData (dict)
+
+This function read data from the 'LFP' folder (see [Data converter](#data-converter)) to get LFP data and converts them to a dict according to the given template.
+
+> *function* **convert_RSE(raw_dir, data_template)**
+> - raw_dir () - the directory path of the raw recording data 
+> - data_template (Template) - the template of data structure 
+>
+> Returns: InputData (dict)
+
+This function read data from the DIO folder (see [Data converter](#data-converter)) to get RecordingSystemEvent data and converts them to a dict according to the given template.
+
+> *function* **format_file(root_dir, map_path, output_dir, content_list, sorter=None)**
 > - root_dir (str) - the root directory for a session
 > - map_path (str) - the path of probe map
 > - output_dir (str) - the target directory to save output results
+> - content_list (list) - a list including wanted data, for example, ['spike', 'TCR', 'LFP'] 
+> - sorter (str) - the sorter's name, for example, 'kilosort2_5'
 >
 > Returns: None
 
-This function would first load probe, then search and load the .ns6 file from the 'root_dir' folder for time stamps, collect spike (from 'root_dir/sorted_data' see [Dataset structure](#dataset-structure)), TCR, LFP, and RecordingSystemEvent, and finally output as `neural_data.nwb` in the 'output_dir' folder via ```SmartNeo```. The data structure see ```template_neural_data.yml```.
+This function would first load probe and template, then get and convert data using above funtions, finally collect the dicts into a list and output as an NWB file in the 'output_dir' folder via ```SmartNeo```. For example, if the content_list=['spike', 'TCR', 'LFP'], the name of the NWB file would be 'spike_TCR_LFP.nwb'. The RecordingSystemEvent data are always included regardless of the content_list. The data structure see ```template_neural_data.yml```.
 
 This .py file can also be run in a batch script as
 
-```python data_formatter_neural_blackrock.py -r /the/root/dir -o /the/output/dir -mp /the/map/path``` 
+```python data_formatter_neural_spikegadgets.py -r /the/root/dir -o /the/output/dir -mp /the/map/path -cl ['spike', 'TCR', 'LFP'] -sorter 'kilosort2_5'``` 
 
 
 ---
 
 ## Data sorter
-### Sort neural data recorded with Utah arrays (BlackRock)
+### Sort neural data (BlackRock)
 
-This `data_sorter_utah_96_blackrock.py` aims to sort neural data recorded with a 96-channel Utah Array. 
+This `data_sorter_blackrock.py` aims to sort neural data recorded using the BlackRock system. 
 
-==To be filled==
----
-
-### Sort neural data recorded with flexible arrays (SpikeGadgets)
-
-This `data_sorter_fa_1024_spikegadgets.py` aims to sort neural data recorded with a 1024-channel flexible probe. 
-
-> *function* **sorting(root_dir, map_path, output_dir, container_dir)**
+> *function* **sorting(sorter, root_dir, map_path, output_dir, container_dir)**
+> - sorter (str) - the sorter's name, for example, 'kilosort2_5'
 > - root_dir (str) - the root directory for a session
 > - map_path (str) - the path of probe map
 > - output_dir (str) - the target directory to save output results
@@ -187,11 +287,32 @@ This `data_sorter_fa_1024_spikegadgets.py` aims to sort neural data recorded wit
 >
 > Returns: None
 
-This function would first load probe and set device, then perform sorting with ```spikeinterface``` module, based on the '.rec' file searched from the 'root_dir' folder. In the container directory, there should be a singularity image file which fits the sorting method. The sorting results would be saved in 'root_dir/sorted_data' (see [Dataset structure](#dataset-structure))
+This function would first load probe information, then perform sorting with ```spikeinterface``` module, based on the '.ns6' file searched from the 'root_dir' folder. In the container directory, there should be a singularity image file which fits the sorting method (the sorter). The sorting results would be saved in 'root_dir/sorted_data' (see [Dataset structure](#dataset-structure))
 
 This .py file can also be run in a batch script as
 
-```python data_sorter_fa_1024_spikegadgets.py -r /the/root/directory/path -mp /the/map/path -o /the/output/directory/path -cp /the/directory/path/container/located/in``` 
+```python data_sorter_blackrock.py -sorter 'kilosort2_5' -r /the/root/directory/path -mp /the/map/path -o /the/output/directory/path -cp /the/directory/path/container/located/in``` 
+
+---
+
+### Sort neural data (SpikeGadgets)
+
+This `data_sorter_spikegadgets.py` aims to sort neural data recorded using the SpikeGadgets system. 
+
+> *function* **sorting(sorter, root_dir, map_path, output_dir, container_dir)**
+> - sorter (str) - the sorter's name, for example, 'kilosort2_5'
+> - root_dir (str) - the root directory for a session
+> - map_path (str) - the path of probe map
+> - output_dir (str) - the target directory to save output results
+> - container_dir (str) - the directory container file located in
+>
+> Returns: None
+
+This function would first load probe information, then perform sorting with ```spikeinterface``` module, based on the '.rec' file searched from the 'root_dir' folder. In the container directory, there should be a singularity image file which fits the sorting method (the sorter). The sorting results would be saved in 'root_dir/sorted_data' (see [Dataset structure](#dataset-structure))
+
+This .py file can also be run in a batch script as
+
+```python data_sorter_spikegadgets.py -sorter 'kilosort2_5' -r /the/root/directory/path -mp /the/map/path -o /the/output/directory/path -cp /the/directory/path/container/located/in``` 
 
 ---
 
@@ -246,7 +367,7 @@ This `data_checker_channel_map_plotting.py` aims to plot the probe map.
 >
 > Returns: None
 
-This function would first load probe with [Get probe](#get-probe), then save the map figure as `channel_map.png` in the 'output_dir' folder.
+This function would first load probe (with [get_probe](#get-probe)), then save the map figure as `channel_map.png` in the 'output_dir' folder.
 
 This .py file can also be run in a batch script as
 
@@ -342,7 +463,7 @@ After clicking the `Choose directory` button, a asking window would appear for d
 ## Helpers
 ### Get probe
 
-This helper, aiming to get certain probe information, can be extended to a series of scripts, with `get_probe_bohr_utah96.py` as an example. 
+This `get_probe.py` aims to read probe information from a .cmp file. 
 
 Note: The probes used in different subjects are different, so that defining special get_probe_*.py would be more useful. 
 
@@ -395,11 +516,10 @@ This .py file can also be run in a batch script as
 This is a tag file to mark the progress of sorting.
 
 - Generated during automatic sorting (see [Data sorter](#sort-neural-data-recorded-with-flexible-arrays-spikegadgets)), originally named as auto*.txt, here * means the short name of the sorting method, for example, autokilo.txt for Kilosort 2.5.
+- After sorting, if there are errors during sorting, wrong_shanks_#.txt, with # represents the number of wrong shanks.
 - After sorting summary (see [Data sorter](#summarize-sorting-results)), the file would be renamed as auto*_voted.txt
-- After dataset scanning (see above),
-  - If there are errors during sorting, wrong_shanks_#.txt, with # represents the number of wrong shanks.
-  - If there are no errors during sorting, 
-     - auto*[_voted]_verified.txt, already manual verified
-     - auto*[_voted]_toverify\$\$\$.txt, with shank data of ids \$ to be mannually verified.
+- After dataset scanning, 
+  - auto*[_voted]_verified.txt, already manual verified
+  - auto*[_voted]_toverify\$\$\$.txt, with shank data of ids \$ to be mannually verified.
 
 ---

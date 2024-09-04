@@ -142,7 +142,7 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
         return InputData
     
 
-def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):    
+def convert_TCR(data, timestamp, data_template, probegroup, bandpass_params):    
     InputData = copy.deepcopy(data_template)
     InputData['RecordingSystemEvent'] = 'null'
     InputData['Spike'] = 'null'
@@ -159,11 +159,7 @@ def convert_TCR(data, timestamp, sorter_output_path, data_template, probegroup, 
     # lowcut = 300.0
     # highcut = 6000.0
 
-    for i in os.listdir(sorter_output_path):
-        
-        shank_ind = i.split("_")[2]
-        p = probegroup.probes[int(shank_ind)]
-        
+    for shank_ind, p in enumerate(probegroup.probes):
         for ch_ind, chn in tqdm(enumerate(p.device_channel_indices)):
             
             f_ch = butter_bandpass_filter(data[:,chn], lowcut, highcut, fs, order=5)
@@ -290,7 +286,7 @@ def convert_RSE(root_dir, data_template):
     return InputData
 
 
-def format_file(root_dir, map_path, output_dir, content_list, sorter):
+def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
     #%% prepare
     # load template
     FILEPATH = os.path.dirname(os.path.abspath(__file__))
@@ -316,10 +312,16 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
     data, timestamp = get_timestamp(raw_dir)
 
     # get sorter_output path
-    sorter = sorter.lower()
-    if '.' in sorter:
-        sorter = sorter.replace(".", "_")
-    sorter_output_path = os.path.join(root_dir,'sorted_data','{}_output'.format(sorter))
+    if len([i for i in content_list if i.lower()=='spike'])>0:
+        if not sorter:
+            print("The data have not yet sorted.")
+            sys.exit()
+
+    if sorter:
+        sorter = sorter.lower()
+        if '.' in sorter:
+            sorter = sorter.replace(".", "_")
+        sorter_output_path = os.path.join(root_dir,'sorted_data','{}_output'.format(sorter))
 
     # set bandpass parameters
     fs = 30000.0
@@ -365,7 +367,7 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter):
         
     nwb_saver = NWBInterface()
     nwb_saver.save_nwb(blockdata = neuralblock, 
-                       filename = os.path.join(output_dir, 'neural_data.nwb'))
+                       filename = os.path.join(output_dir, '{}.nwb'.format('_'.join(content_list))))
         
 
 #%% parse the input arguments
@@ -382,7 +384,14 @@ parser.add_argument('-o', '--output', type=str,
 parser.add_argument('-mp', '--map_path', 
                     default='/home/cuihe_lab/lichenyang/DATA_AMAX/Neucyber-NC-2023-A-01/Bohr/Spike_sorting/SN+11386-000049.cmp')
 
+parser.add_argument('-cl', '--content_list', 
+                    default="['spike', 'TCR', 'LFP']")
+
+parser.add_argument('-sorter', '--sorter_name', 
+                    default='kilosort2_5')
+
+
 args = parser.parse_args()
 
-format_file(args.root, args.map_path, args.output)        
+format_file(args.root, args.map_path, args.output, args.content_list, args.sorter_name)        
         
