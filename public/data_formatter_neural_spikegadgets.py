@@ -78,7 +78,8 @@ def convert_spike(raw_dir, sorter_output_path, data_template, probegroup):
                                  'pos' : p.contact_positions[ci['ch']],
                                  'electrode' : float(shank_ind),
                                  'annotations' : '',
-                                 'chn_meta' : ci}
+                                 'chn_meta' : ci,
+                                 'sh': shank_ind}
             
             sampling_rate = int(timestamp['clockrate'])
             if not 'shank ' + shank_ind in InputData['Spike']:
@@ -143,7 +144,8 @@ def convert_TCR(raw_dir, data_template, probegroup):
                                  'pos' : p.contact_positions[int(chn)-1],
                                  'electrode' : float(1),
                                  'annotations' : '',
-                                 'chn_meta' : des}
+                                 'chn_meta' : des,
+                                 'sh': shank_ind}
             
             sampling_rate = int(timestamp['clockrate'])
             
