@@ -1,0 +1,51 @@
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/psth’: Permission denied
+plot channel map
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_map.py': [Errno 2] No such file or directory
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/psth’: Permission denied
+check time consistency
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/hdmf/utils.py:668: UserWarning: Ignoring cached namespace 'core' version 2.6.0-alpha because version 2.7.0 is already loaded.
+  return func(args[0], **pargs)
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/Time_consistency_check.py': [Errno 2] No such file or directory
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/psth’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240229_interception_001/description/psth’: Permission denied
+channel consistency caculation
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_consistency.py': [Errno 2] No such file or directory
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/touch_scatter’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/psth_temp’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/cache_data_do_not_del’: Permission denied
+plot channel map
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_map.py': [Errno 2] No such file or directory
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/touch_scatter’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/psth_temp’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/cache_data_do_not_del’: Permission denied
+check time consistency
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/hdmf/utils.py:668: UserWarning: Ignoring cached namespace 'core' version 2.6.0-alpha because version 2.7.0 is already loaded.
+  return func(args[0], **pargs)
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/Time_consistency_check.py': [Errno 2] No such file or directory
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/touch_scatter’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/psth_temp’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/cache_data_do_not_del’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/chn_waveform/.ipynb_checkpoints’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/touch_scatter’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/psth_temp’: Permission denied
+find: ‘/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/description/cache_data_do_not_del’: Permission denied
+channel consistency caculation
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_consistency.py': [Errno 2] No such file or directory
+/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240403_interception_001
+plot channel map
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_map.py': [Errno 2] No such file or directory
+check time consistency
+/home/cuihe_lab/lichenyang/DATA_AMAX/anaconda3/lib/python3.11/site-packages/hdmf/utils.py:668: UserWarning: Ignoring cached namespace 'core' version 2.6.0-alpha because version 2.7.0 is already loaded.
+  return func(args[0], **pargs)
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/Time_consistency_check.py': [Errno 2] No such file or directory
+channel consistency caculation
+python: can't open file '/AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_consistency.py': [Errno 2] No such file or directory

@@ -1,0 +1,18 @@
+AbsoluteTrialStartTime:
+  des: null
+BehavioralCodes:
+  event: null
+Block:
+  des: null
+Condition:
+  des: null
+ObjectStatusRecord:
+  Position:
+    irr: null
+  Status:
+    irr: null
+Trial:
+  ind: null
+TrialError:
+  des: null
+UserVars: {}
