@@ -6,7 +6,6 @@ Created on Mon Aug 26 15:42:01 2024
 @author: cuilab
 """
 
-import os
 import numpy as np
 from probeinterface import Probe, ProbeGroup
 

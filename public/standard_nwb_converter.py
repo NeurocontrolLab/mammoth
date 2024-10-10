@@ -21,7 +21,6 @@ from pynwb import NWBHDF5IO, NWBFile, TimeSeries
 from pynwb.ecephys import LFP, ElectricalSeries
 from pynwb.behavior import BehavioralEvents,BehavioralTimeSeries,SpatialSeries
 from pynwb.file import Subject
-from pynwb.core import DynamicTable
 
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
 from probeinterface import read_probeinterface
@@ -240,6 +239,7 @@ with open(filename_, 'r') as file:
 diff_time_mean = float(dt_str.split(' ')[0])
 
 # # add time difference
+# from pynwb.core import DynamicTable
 # behavior_ecephys_module = nwbfile.create_processing_module(
 #     name='behavior_ecephys_analysis', 
 #     description='Quality control and pre-analysis results')
@@ -256,6 +256,7 @@ diff_time_mean = float(dt_str.split(' ')[0])
 # time_diff_table.add_row(id=0, time_difference=diff_time_mean)
 
 # behavior_ecephys_module.add(time_diff_table)
+
 global time_difference
 time_difference=diff_time_mean
 
@@ -371,10 +372,10 @@ behavioral_times.create_timeseries(
             when displayed, the monkey needs to place its hand at the central position.\
             Target is the goal that the monkey needs to touch. \
             Feedback represents the position on the screen where the macaque \
-                clicks and will display "wrong" or "right" to indicate whether \
-                the action was incorrect or correct. Other attributes are \
-                measured in centimeters. If the content is empty, it means \
-                that the cursor did not appear.'
+            clicks and will display "wrong" or "right" to indicate whether \
+            the action was incorrect or correct. Other attributes are \
+            measured in centimeters. If the content is empty, it means \
+            that the cursor did not appear.'
 )
 behavior_module.add(behavioral_times)
 
@@ -518,3 +519,4 @@ if os.path.exists(save_path):
 
 with NWBHDF5IO(os.path.join(formated_data_path, "standard_data.nwb"), "w") as io:
     io.write(nwbfile)
+    
