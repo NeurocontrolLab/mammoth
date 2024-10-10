@@ -38,7 +38,11 @@ parser.add_argument('-o', '--output', type=str,
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 parser.add_argument('-mp', '--map_path', 
+<<<<<<< HEAD
                     default='/home/cuihe_lab/lichenyang/DATA_AMAX/Neucyber-NC-2023-A-01/Bohr/Spike_sorting/SN+11386-000049.cmp')
+=======
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2.json')
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03
 
 args = parser.parse_args()
 raw_dirname = args.file
@@ -159,7 +163,10 @@ for iunit in range(nunits):
                      chn_id=int(spike_times.description["chn"]),
                      waveform_mean=spike_times.description["mean_waveform"],
                      electrode_group=ETR_list[int(spike_times.description["electrode"])],
+<<<<<<< HEAD
                      electrode=int(spike_times.description["chn_meta"]),
+=======
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03
                      time_unit='seconds',
                      sorting_info=json.dumps(spike_times.description["chn_meta"]),
                      # sorting_info=spike_times.description["chn_meta"],
@@ -174,7 +181,10 @@ for iunit in range(nunits):
                      chn_id=int(spike_times.description["chn"]),
                      waveform_mean=spike_times.description["mean_waveform"],
                      electrode_group=ETR_list[int(spike_times.description["electrode"])],
+<<<<<<< HEAD
                      electrode=int(spike_times.description["chn_meta"]),
+=======
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03
                      time_unit='seconds',
                      sorting_info = 'NA',
                      sorter = 'TCR')
@@ -230,7 +240,11 @@ ecephys_module.add(behavioral_events)
 del neural_data
 
 
+<<<<<<< HEAD
 #%% Add time difference data
+=======
+# %% Add time difference data
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03
 # load saved time difference data
 filename_ = os.path.join(raw_dirname,'description', 'diff_time_mean.txt')
 with open(filename_, 'r') as file:
@@ -238,6 +252,7 @@ with open(filename_, 'r') as file:
 
 diff_time_mean = float(dt_str.split(' ')[0])
 
+<<<<<<< HEAD
 # # add time difference
 # from pynwb.core import DynamicTable
 # behavior_ecephys_module = nwbfile.create_processing_module(
@@ -255,6 +270,25 @@ diff_time_mean = float(dt_str.split(' ')[0])
 
 # time_diff_table.add_row(id=0, time_difference=diff_time_mean)
 # behavior_ecephys_module.add(time_diff_table)
+=======
+# add time difference
+from pynwb.core import DynamicTable
+behavior_ecephys_module = nwbfile.create_processing_module(
+    name='behavior_ecephys_analysis', 
+    description='Quality control and pre-analysis results')
+
+time_diff_table = DynamicTable(
+    name='TimeDifference',
+    description='Time difference between behavior and ecephys')
+
+time_diff_table.add_column(
+    name='time_difference',
+    description='Behavior - Ecephys (s)'
+)
+
+time_diff_table.add_row(id=0, time_difference=diff_time_mean)
+behavior_ecephys_module.add(time_diff_table)
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03
 
 global time_difference
 time_difference=diff_time_mean
@@ -616,10 +650,18 @@ del bhv_data
 
 
 #%% Writing standard NWB file
+<<<<<<< HEAD
 save_path = os.path.join(formated_data_path, "standard_data.nwb")
 if os.path.exists(save_path):
     os.remove(save_path)
 
 with NWBHDF5IO(os.path.join(formated_data_path, "standard_data.nwb"), "w") as io:
+=======
+save_path = os.path.join(formated_data_path, "standard_data2.nwb")
+if os.path.exists(save_path):
+    os.remove(save_path)
+
+with NWBHDF5IO(os.path.join(formated_data_path, "standard_data2.nwb"), "w") as io:
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03
     io.write(nwbfile)
     
