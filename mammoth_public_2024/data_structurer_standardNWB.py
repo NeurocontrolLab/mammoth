@@ -408,7 +408,7 @@ trial_ts_view = pd.DataFrame.from_dict(info)
 trial_view = pd.DataFrame(columns=['start_time', 'stop_time', 'target_on_time',
                                    'go_cue_time', 'movement_onset_time',
                                    'touch_time', 'init_pos', 'target_speed',
-                                   'result_marker','result_label',
+                                   'result_marker','result_label', 'touch position',
                                    ])
 
 key_label_dict = {'target_on_time': 'Target on', 'go_cue_on_time': 'Gosignal on',

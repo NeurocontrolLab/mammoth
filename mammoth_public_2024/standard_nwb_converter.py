@@ -254,7 +254,6 @@ diff_time_mean = float(dt_str.split(' ')[0])
 # )
 
 # time_diff_table.add_row(id=0, time_difference=diff_time_mean)
-
 # behavior_ecephys_module.add(time_diff_table)
 
 global time_difference
@@ -341,7 +340,7 @@ vicon_pos_series = SpatialSeries(
         The three columns are x, y, and z positions'
 )
 behavior_module.add(vicon_pos_series)
-
+del vm, vm_time
 
 # add object info in each frame
 def unpack_objects(d):
@@ -354,6 +353,7 @@ def unpack_objects(d):
 bhv_frame = [i for i in bhv_data.segments if i.name=='Frame'][0].events[0]
 bhv_frame_ = [unpack_objects(json.loads(i)) for i in bhv_frame.labels]
 frame_time = np.array(bhv_frame.times.rescale(pq.s).magnitude).squeeze()
+del bhv_frame
 
 '''---Align behavioral data time to neural data time---'''
 frame_time = frame_time - time_difference
@@ -363,19 +363,10 @@ behavioral_times = BehavioralTimeSeries(name='FrameInfo')
 
 behavioral_times.create_timeseries(
     name='FrameInfoTable',
-    data=[json.dumps(i) for i in bhv_frame_],
+    data=[json.dumps(i) for i in bhv_frame_][:100],
     unit='NA',
-    timestamps = frame_time,
-    description='JSON encoded data.\
-        There are three objects: \
-            center is the object that appears in the center; \
-            when displayed, the monkey needs to place its hand at the central position.\
-            Target is the goal that the monkey needs to touch. \
-            Feedback represents the position on the screen where the macaque \
-            clicks and will display "wrong" or "right" to indicate whether \
-            the action was incorrect or correct. Other attributes are \
-            measured in centimeters. If the content is empty, it means \
-            that the cursor did not appear.'
+    timestamps=frame_time[:100],
+    description='JSON encoded data. There are three objects: "center" is the object that appears in the center; when displayed, the monkey needs to place its hand at the central position. "Target" is the goal that the monkey needs to touch. "Feedback" represents the position on the screen where the macaque clicks and will display "wrong" or "right" to indicate whether the action was incorrect or correct. Other attributes are measured in centimeters. If the content is empty, it means that the cursor did not appear.'
 )
 behavior_module.add(behavioral_times)
 
@@ -407,9 +398,10 @@ trial_ts_view = pd.DataFrame.from_dict(info)
 # add as trials
 trial_view = pd.DataFrame(columns=['start_time', 'stop_time', 'target_on_time',
                                    'go_cue_time', 'movement_onset_time',
-                                   'touch_time', 'init_pos', 'target_speed',
-                                   'result_marker','result_label',
-                                   ])
+                                   'touch_time', 'feedback_on_time',
+                                   'target_pos_init', 'target_speed',
+                                   'result_marker','result_label', 
+                                  ])
 
 key_label_dict = {'target_on_time': 'Target on', 'go_cue_on_time': 'Gosignal on',
                   'movement_onset_time': 'Movement onset', 
@@ -433,6 +425,13 @@ for itrial in range(max(trial_ts_view['trial_number'])):
     
         if len(ts_ls)==1:
             trial_view.loc[itrial, k] = ts_ls[0] 
+    
+    ts_ls = [event_time[ind] for ind, i in enumerate(event_label) 
+             if (i in ['Right feedback on', 'Wrong feedback on']) and 
+             ((event_time[ind]>start)&(event_time[ind]<end))]
+
+    if len(ts_ls)==1:
+        trial_view.loc[itrial, 'feedback_on_time'] = ts_ls[0] 
 
     trial_view.loc[itrial, 'init_pos_x'] = \
         trial_ts_view.loc[
@@ -452,16 +451,100 @@ for itrial in range(max(trial_ts_view['trial_number'])):
         (trial_ts_view['trial_number']==itrial)&
         (trial_ts_view['status']=='end'), 'wrong'].values[0]['number']
 
-trial_view['init_pos'] = [[x, y] for x, y in 
+trial_view['target_pos_init'] = [[x, y] for x, y in 
                           zip(trial_view['init_pos_x'], 
                               trial_view['init_pos_y'])]
 
-assert trial_view['start_time']==[event_time[i] for i in range(len(event_time))
-                                    if event_label[i]=='Center on'][0]
-aaa = trial_view['start_time'].tolist()
-bbb = [event_time[i] for i in range(len(event_time))
-                                    if event_label[i]=='Center on']
-[i for i in range(len(bbb)) if (aaa[i]-bbb[i])>1e-6]
+# assert trial_view['start_time']==[event_time[i] for i in range(len(event_time))
+#                                     if event_label[i]=='Center on'][0]
+# aaa = trial_view['start_time'].tolist()
+# bbb = [event_time[i] for i in range(len(event_time))
+#                                     if event_label[i]=='Center on']
+# [i for i in range(len(bbb)) if (aaa[i]-bbb[i])>1e-6]
+
+frame_view = pd.DataFrame.from_dict(bhv_frame_)
+frame_view['time'] = frame_time
+
+pos_df = pd.DataFrame(columns=['target_pos_go_x', 'target_pos_go_y'
+                               'target_pos_touch_x', 'target_pos_touch_y',
+                               'feedback_pos_touch_x' 'feedback_pos_touch_y'])
+
+for itrial in range(len(trial_view.index)):
+    if not pd.isna(trial_view.loc[itrial, 'go_cue_on_time']):        
+        
+        pls1 = frame_view.loc[
+            abs(frame_view['time']-trial_view.loc[itrial, 'go_cue_on_time']).nsmallest(1).index,
+            'object2'].values[0]['pos']
+        pos_df.loc[itrial, 'target_pos_go_x'] = pls1[0]
+        pos_df.loc[itrial, 'target_pos_go_y'] = pls1[1]
+    else:
+        pos_df.loc[itrial, 'target_pos_go_x'] = np.nan
+        pos_df.loc[itrial, 'target_pos_go_y'] = np.nan
+
+    if not pd.isna(trial_view.loc[itrial, 'touch_time']):
+        
+        pls2 =  frame_view.loc[
+             abs(frame_view['time']-trial_view.loc[itrial, 'touch_time']).nsmallest(1).index,
+             'object2'].values[0]['pos']
+        
+        pos_df.loc[itrial, 'target_pos_touch_x'] = pls2[0]
+        pos_df.loc[itrial, 'target_pos_touch_y'] = pls2[1]
+    else:
+        pos_df.loc[itrial, 'target_pos_touch_x'] = np.nan
+        pos_df.loc[itrial, 'target_pos_touch_y'] = np.nan
+    
+    if not pd.isna(trial_view.loc[itrial, 'feedback_on_time']):
+        pls3_candidate =  frame_view.loc[
+            abs(frame_view['time']-trial_view.loc[itrial, 'feedback_on_time']).nsmallest(5).index,
+            'object3']
+        pls3 = [i for i in pls3_candidate if not pd.isna(i)][0]['pos']
+        
+        pos_df.loc[itrial, 'feedback_pos_touch_x'] = pls3[0]
+        pos_df.loc[itrial, 'feedback_pos_touch_y'] = pls3[1]
+    else:
+        pos_df.loc[itrial, 'feedback_pos_touch_x'] = np.nan
+        pos_df.loc[itrial, 'feedback_pos_touch_y'] = np.nan
+        
+trial_view['target_pos_go'] = [[x, y] 
+                               for x, y in zip(pos_df['target_pos_go_x'], 
+                                               pos_df['target_pos_go_y'])]
+
+trial_view['target_pos_touch'] = [[x, y] 
+                                  for x, y in zip(pos_df['target_pos_touch_x'], 
+                                                  pos_df['target_pos_touch_y'])]
+
+trial_view['feedback_pos'] = [[x, y] 
+                              for x, y in zip(pos_df['feedback_pos_touch_x'], 
+                                              pos_df['feedback_pos_touch_y'])]
+
+
+all_w = eval(bhv_par.labels[0])['all_w']
+for itrial in range(len(trial_view.index)):
+    
+    if not pd.isna(trial_view.loc[itrial, 'target_on_time']):
+        trial_frame = \
+            frame_view[(frame_view['time']>trial_view.loc[itrial, 'target_on_time'])&
+                (frame_view['time']<trial_view.loc[itrial, 'stop_time'])]
+        center = trial_frame['object1'].values[0]['pos']
+        
+        target_frame1 = trial_frame['object2'].values[0]['pos']
+        target_frame2 = trial_frame['object2'].values[1]['pos']
+        
+        a1 = np.mod(np.arctan2(target_frame1[1]-center[1], target_frame1[0]-center[0]),
+                    np.pi*2)
+        a2 = np.mod(np.arctan2(target_frame2[1]-center[1], target_frame2[0]-center[0]),
+                    np.pi*2)
+        
+        w = abs((a2-a1)/(trial_frame['time'].values[1] - trial_frame['time'].values[0])
+             /np.pi*180)*np.sign(np.cross(target_frame1, target_frame2))
+        
+        w_cond = all_w[np.argmin(abs(all_w-w))]
+    
+        trial_view.loc[itrial, 'target_speed'] = w_cond
+    
+    else:
+        trial_view.loc[itrial, 'target_speed'] = np.nan
+
 
 # set trials
 nwbfile.add_trial_column(
@@ -489,8 +572,24 @@ nwbfile.add_trial_column(
     description="Label for behavioral result",
 )
 nwbfile.add_trial_column(
-    name="init_pos",
+    name="target_pos_init",
     description="Initial position for the moving target",
+)
+nwbfile.add_trial_column(
+    name="target_pos_go",
+    description="The position of the moving target at Go-signal on",
+)
+nwbfile.add_trial_column(
+    name="target_pos_touch",
+    description="The position of the moving target at Target touched",
+)
+nwbfile.add_trial_column(
+    name="feedback_pos",
+    description="The feedback (touch) position of the hand",
+)
+nwbfile.add_trial_column(
+    name="target_speed",
+    description="Angular speed of the moving target",
 )
 
 ntrial = len(trial_view)
@@ -504,7 +603,11 @@ for itrial in range(ntrial):
         touch_time=trial_view.loc[itrial, 'touch_time'],
         result_marker=trial_view.loc[itrial, 'result_marker'],
         result_label=trial_view.loc[itrial, 'result_label'],
-        init_pos=trial_view.loc[itrial, 'init_pos'],
+        target_pos_init=trial_view.loc[itrial, 'target_pos_init'],
+        target_pos_go=trial_view.loc[itrial, 'target_pos_go'],
+        target_pos_touch=trial_view.loc[itrial, 'target_pos_touch'],
+        feedback_pos=trial_view.loc[itrial, 'feedback_pos'],
+        target_speed=trial_view.loc[itrial, 'target_speed'],
         )
 nwbfile.trials.to_dataframe()
 

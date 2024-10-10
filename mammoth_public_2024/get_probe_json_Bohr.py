@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 26 15:42:01 2024
+Created on Tue Oct  8 13:21:20 2024
 
 @author: cuilab
 """
-
+import os
 import numpy as np
-from probeinterface import Probe, ProbeGroup
+import argparse
+from probeinterface import Probe, ProbeGroup, write_probeinterface
 
-
-def get_probe(map_path):
-    # Bohr
-    with open(map_path, 'r') as f:
+def get_probe_json(map_path, output_path, file_name):
+    with open(map_path,'r') as f:
         probe_info = f.readlines()[14::]
-
+    
     probe_info = [i.split() for i in probe_info][0:-1]
-
+    
     array_name = ['elec'] if '-' not in probe_info[0][-1]\
         else list(set([i[-1].split('-')[0] for i in probe_info]))
-
+    
     array_name.sort()
-
+    
     probegroup = ProbeGroup()
     for array in array_name:
         # create an electrode group for this shank
@@ -29,7 +28,8 @@ def get_probe(map_path):
         probe_2d.annotate(
             name = array, 
             manufacturer="blackrock microsystem",
-            description = 'one 96 Utah array')
+            escription = '96-ch Utah array x 2'
+            )
         positions = []
         device_channel = []
         
@@ -49,4 +49,19 @@ def get_probe(map_path):
         probe_2d.create_auto_shape(probe_type='tip')
         probegroup.add_probe(probe_2d)
         
-    return probegroup
+    write_probeinterface(os.path.join(output_path, file_name+'.json'),
+                         probegroup)
+
+
+#%%
+parser = argparse.ArgumentParser(argument_default=None)
+
+parser.add_argument('-mp', '--map_path', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/SN+11386-000049.cmp')
+
+parser.add_argument('-o', '--output', type=str, 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/', 
+                    metavar='/the/path/you/want/to/save', help='output folder')
+
+args = parser.parse_args()
+get_probe_json(args.map_path, args.output, "Bohr_Utah_96x2")
