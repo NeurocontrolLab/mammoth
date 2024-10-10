@@ -1,5 +1,5 @@
 # mammoth
 
-# public functions for airflow and batch processing.
+# Public functions for airflow and batch processing.
 
-# the pipeline would output data as standard NWB files.
+# The pipeline would output data as standard NWB files.
