@@ -4,4 +4,4 @@
 
 # The pipeline would output data as standard NWB files.
 
-# 2024 Cui Lab
+# 2024 - Cui Lab - CIBR
