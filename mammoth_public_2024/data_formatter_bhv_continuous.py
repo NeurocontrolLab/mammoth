@@ -39,10 +39,10 @@ def format_file(root_dir, output_dir):
         Template = yaml.safe_load(f)
         
     #%% convert AnalogData
-    root_directory = os.path.join(root_dir,'bhv')
-    file_pattern = '*behavior.log'
+    root_directory = os.path.join(root_dir, 'bhv')
+    file_pattern = '*.log'
     matching_files = find_files_with_name(root_directory, file_pattern)
-    with open(matching_files[0],'r') as f:
+    with open(matching_files[0], 'r') as f:
         bhv_data = f.readlines()
 
     @numba.jit

@@ -18,10 +18,10 @@ import pandas as pd
 import brpylib
 import argparse
 import quantities as pq
-from user_input_entry import BRShare as bs
+from user_input_entry_collection import BRShare as bs
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
-from get_probe import get_probe
+from probeinterface import read_probeinterface
 
 
 #%% define functions
@@ -293,7 +293,7 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
     Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
     
     # load probe
-    probegroup = get_probe(map_path)
+    probegroup = read_probeinterface(map_path)
     
     # get raw data path
     try:

@@ -9,12 +9,12 @@ Created on Sun Aug 26 22:03:01 2024
 import argparse
 import os
 import matplotlib.pyplot as plt
-from get_probe_bohr_utah96 import get as get_probe
+from probeinterface import read_probeinterface
 from probeinterface.plotting import plot_probe
 
 
 def run(map_path, output_dir):
-    probegroup = get_probe(map_path)
+    probegroup = read_probeinterface(map_path) # read probe json
 
     fig, (ax1,ax2) = plt.subplots(2,1)
     plot_probe(probegroup.probes[0], ax=ax1)
