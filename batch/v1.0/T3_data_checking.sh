@@ -1,12 +1,15 @@
 #!/bin/bash
 
-#SBATCH -J bohrqc
-#SBATCH -o /AMAX/cuihe_lab/cuilab_share/Bohr/Code/Data_recording/Quality_control/job.out
-#SBATCH -n 1
-#SBATCH -p q_fat_2
-#SBATCH -c 4
+#SBATCH -J bohrchecking
+#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/Bohr/checking_job_%j.out 
+#SBATCH -p q_gpu_c
+#SBATCH --gres=gpu:1
 
-for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/*; do
+# SBATCH -n 1
+# SBATCH -p q_fat_2
+# SBATCH -c 4
+
+for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/*; do
 
     keyword='wrong'
 
@@ -23,20 +26,20 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/*;
     echo $dir
     if ! find $dir/description -name "channel_map.png" | read -r; then
       echo "plot channel map"
-        python /AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_map.py -f $dir -o $dir
+        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker_channel_map_plotting.py -mp /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2.json -o $dir/description
     fi
     
     if ! find $dir/description -name "Time_consistency_check.png" | read -r; then
       echo "check time consistency"
-        python /AMAX/cuihe_lab/cuilab_share/Bohr/Code/Data_recording/Quality_control/behavior_formatter.py -f $dir -o $dir
-        python /AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/Time_consistency_check.py -f $dir -o $dir
+        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker_bhv_slicing.py -d $dir/formatted_data -o $dir/description
+        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker_time_consistency.py -d $dir/formatted_data -o $dir/description
     fi
     
     if ! find $dir/description -name "correlation_test_score.txt" | read -r; then
       if find $dir/formatted_data -name "neural_data_no_sort.nwb" | read -r; then
         echo "neural correlation caculating"
         # 执行 pipeline.py 脚本
-        python /AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/neural_correlation_analysis.py -f $dir -o $dir
+        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker_neural_correlation.py -d $dir/formatted_data -o $dir/description -s $dir/description
       fi
     fi
 
@@ -44,7 +47,7 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/*;
       if find $dir/formatted_data -name "neural_data.nwb" | read -r; then
         echo "channel consistency caculation"
         # 执行 pipeline.py 脚本
-        python /AMAX/cuihe_lab/cuilab_share/Bohr/Code/Quality_control/channel_consistency.py -f $dir -o $dir
+        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker_channel_consistency.py -r $dir -d $dir/formatted_data -o $dir/description
       fi
     fi
 
