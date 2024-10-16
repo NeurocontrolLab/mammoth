@@ -367,7 +367,7 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
         
     nwb_saver = NWBInterface()
     nwb_saver.save_nwb(blockdata = neuralblock, 
-                       filename = os.path.join(output_dir, '{}.nwb'.format('_'.join(content_list))))
+                       filename = os.path.join(output_dir, 'neural_data_no_sort.nwb'))
         
 
 #%% parse the input arguments
