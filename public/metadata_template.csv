@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Key,Value
 Subject/subject_id,Bohr
 Subject/sex,M
@@ -15,3 +16,22 @@ NWBFile/experimenter,Chenyang Li
 NWBFile/lab_name,Cuilab
 NWBFile/institution,CIBR
 NWBFile/experiment_description,None
+=======
+Key,Value
+Subject/subject_id,Bohr
+Subject/sex,M
+Subject/age,P3Y
+Subject/species,Rhesus macaque
+Subject/weight,8kg
+Subject/date_of_birth,2020/12/04
+Subject/source,guangxi monkey
+Subject/description,wound care and food and water restriction
+NWBFile/session_start_time,2024/09/26 17:56
+NWBFile/session_number,session_4
+NWBFile/session_description,Monkey intercepts a moving target
+NWBFile/experiment_description,interception
+NWBFile/experimenter,Chenyang Li
+NWBFile/lab_name,Cuilab
+NWBFile/institution,CIBR
+NWBFile/experiment_description,None
+>>>>>>> 30ed201402aebf165a59b0f25615ba2e47694b03

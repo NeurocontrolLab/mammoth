@@ -147,3 +147,4 @@ parser.add_argument('-o', '--output', type=str,
 args = parser.parse_args()
 
 run(args.data, args.output, args.root)
+
