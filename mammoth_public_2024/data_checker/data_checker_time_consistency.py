@@ -8,6 +8,7 @@ Created on Tue Aug 27 15:09:19 2024
 
 import os
 from dtw import accelerated_dtw
+import json
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
@@ -28,7 +29,9 @@ def run(data_dir, output_dir):
     neural_event_times = neural_event.events[0].times
 
     # get events from trial operating system
-    ml_event_labels = bhv_data.segments[0].events[0].labels
+    ml_event_labels0 = bhv_data.segments[0].events[0].labels
+    ml_event_labels = np.array(
+        [json.loads(i)['Marker'] for i in ml_event_labels0 if isinstance(json.loads(i), dict)])
     ml_event_times = bhv_data.segments[0].events[0].times
 
     # compute distance between two events (time difference)
@@ -67,10 +70,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240318_BrUtahInterception120SemiBc_001_check/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240318_BrUtahInterception120SemiBc_001_check/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
