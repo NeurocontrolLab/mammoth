@@ -53,6 +53,7 @@ formated_data_path = os.path.join(raw_dirname,'formatted_data')
 # %% Set basic info and create NWB file
 root_directory = os.path.join(raw_dirname,'bhv')
 file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and ('meta' in i)][0]
+assert os.path.exists(os.path.join(root_directory, file_pattern)), "Please define the metadata first!"
 meta_dict_pd = pd.read_csv(os.path.join(root_directory, file_pattern)).to_dict()
 meta_dict = {}
 for i,j in zip(meta_dict_pd['Key'], meta_dict_pd['Value']):
@@ -231,6 +232,7 @@ del neural_data
 # %% Add time difference data
 # load saved time difference data
 filename_ = os.path.join(raw_dirname,'description', 'diff_time_mean.txt')
+assert os.path.exists(filename_), "Please run time consistency check first!"
 with open(filename_, 'r') as file:
     dt_str = file.read()  
 
