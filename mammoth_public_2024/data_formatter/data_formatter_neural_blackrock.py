@@ -18,11 +18,12 @@ import pandas as pd
 import brpylib
 import argparse
 import quantities as pq
-from user_input_entry_collection import BRShare as bs
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
 from probeinterface import read_probeinterface
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from dependencies.user_input_entry_collection import BRShare as bs
 
 #%% define functions
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -289,8 +290,8 @@ def convert_RSE(root_dir, data_template):
 def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
     #%% prepare
     # load template
-    FILEPATH = os.path.dirname(os.path.abspath(__file__))
-    Template = yaml.safe_load(open(os.path.join(FILEPATH,'template_neural_data.yml')))
+    FILEPATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    Template = yaml.safe_load(open(os.path.join(FILEPATH, 'dependencies', 'template_neural_data.yml')))
     
     # load probe
     probegroup = read_probeinterface(map_path)
@@ -337,17 +338,20 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
         Template['Spike'] = {'SorterName' : {}, 'kargs' : {}}
         InputData = convert_spike(data, timestamp, sorter_output_path, Template, probegroup, bandpass_params)
         InputList.append(InputData)
+        print('spike included')
 
     #%% convert TCR
     if len([i for i in content_list if i.upper()=='TCR'])>0:
-        InputData = convert_TCR(data, timestamp, sorter_output_path, Template, probegroup, bandpass_params)    
+        InputData = convert_TCR(data, timestamp, Template, probegroup, bandpass_params)    
         InputList.append(InputData)
+        print('TCR included')
 
     #%% convert LFP
     if len([i for i in content_list if i.upper()=='LFP'])>0:
         Template['LFP'] = templat_neo['ana']
         InputData = convert_LFP(raw_dir, Template)
         InputList.append(InputData)
+        print('LFP included')
 
     #%% convert RecordingSystemEvent
     Template['RecordingSystemEvent'] = templat_neo['event']
@@ -374,18 +378,18 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Data_recording/20240402_interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/home/cuihe_lab/lichenyang/DATA_AMAX/Neucyber-NC-2023-A-01/Bohr/Spike_sorting/SN+11386-000049.cmp')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2.json')
 
-parser.add_argument('-cl', '--content_list', 
-                    default="['spike', 'TCR', 'LFP']")
+parser.add_argument('-flag', '--sort_flag', 
+                    default='0')
 
 parser.add_argument('-sorter', '--sorter_name', 
                     default='kilosort2_5')
@@ -393,5 +397,10 @@ parser.add_argument('-sorter', '--sorter_name',
 
 args = parser.parse_args()
 
-format_file(args.root, args.map_path, args.output, args.content_list, args.sorter_name)        
+if args.sort_flag == '1':
+    content_list = ['spike', 'TCR', 'LFP']
+elif args.sort_flag == '0':
+    content_list = ['TCR']
+
+format_file(args.root, args.map_path, args.output, content_list, args.sorter_name)        
         
