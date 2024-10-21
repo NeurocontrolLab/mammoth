@@ -8,6 +8,7 @@ Created on Sun Feb 14 22:03:01 2021
 
 import argparse
 import os
+import sys
 import yaml
 import copy
 import pandas as pd
@@ -16,7 +17,8 @@ import quantities as pq
 import joblib
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
-from user_input_entry_collection import AIEShare as As
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from dependencies.user_input_entry_collection import AIEShare as As
 import re
 import shutil
 import json
@@ -48,8 +50,8 @@ def datetime_to_seconds(time_str):
 def format_file(root_dir, output_dir):
     #%% load template
 
-    FILEPATH = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(FILEPATH,'template_bhv_data.yml')) as f:
+    FILEPATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(FILEPATH, 'dependencies', 'template_bhv_data.yml')) as f:
         Template = yaml.safe_load(f)
         
     #%% convert AnalogData
@@ -135,10 +137,10 @@ def format_file(root_dir, output_dir):
 #%% parse the input arguments
 parser = argparse.ArgumentParser(description='extract trial info')
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/lichenyang/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240306_br_utah_interception_120_semi_brain_control_001', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/lichenyang/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240306_br_utah_interception_120_semi_brain_control_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

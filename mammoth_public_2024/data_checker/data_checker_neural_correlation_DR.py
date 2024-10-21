@@ -12,8 +12,6 @@ import json
 import pandas as pd
 import numpy as np
 import quantities as pq
-from SmartNeo.analysis_layer.tools.dataset_maker.dataset_maker import DatasetMaker
-from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
 from SmartNeo.analysis_layer.spike_preprocessor3 import SpikeStatistics
 import matplotlib.pyplot as plt
@@ -126,7 +124,7 @@ def run(data_dir, output_dir, description_dir):
     df_ObjectStatusRecord.columns=[len(df_ObjectStatusRecord.columns)*['ObjectStatusRecord'], list(df_ObjectStatusRecord.columns)]
     # df_ObjectStatusRecord.index=trial_index
 
-    frames = [df_description[:-1], df_ObjectStatusRecord]
+    frames = [df_description[:len(df_ObjectStatusRecord)], df_ObjectStatusRecord]
     df_trials = pd.concat(frames,axis=1).rename_axis('TrialIndex')
 
     st = [i for i in neural_data.segments if i.name=='TCR'][0].spiketrains
@@ -147,7 +145,7 @@ def run(data_dir, output_dir, description_dir):
         
         start_time = info_time[info_df[(info_df['trial_number']==ind)&(info_df['status']=='start')].index][0]
         end_time = info_time[info_df[(info_df['trial_number']==ind)&(info_df['status']=='end')].index][0]
-        aligned_time = event_time[(np.array(event_marker)==5)*(event_time>start_time)&(event_time<end_time)]
+        aligned_time = event_time[(np.array(event_marker)==5)*(event_time>start_time)&(event_time<end_time)][0]
 
         kwargs = {
                 # 't_start': Event['Times'][Event['Labels']==5]-1*pq.s+Description['AbsoluteTrialStartTime'],
@@ -169,7 +167,7 @@ def run(data_dir, output_dir, description_dir):
         'sampling_period' : 50*pq.ms
     }
 
-    sliced_st = SpikeStatistics.preprocessing('spike_time', kwargs_list, st_shift)
+    # sliced_st = SpikeStatistics.preprocessing('spike_time', kwargs_list, st_shift)
     sliced_is = SpikeStatistics.preprocessing('instantaneous_rate', kwargs_list, st_shift, **kwargs)
     trial_ind = trial_ind[trial_ind<sliced_is.shape[0]]
     move_direction = move_direction[0:len(trial_ind)]

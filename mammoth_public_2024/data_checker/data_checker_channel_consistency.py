@@ -135,13 +135,13 @@ def run(data_dir, output_dir, root_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-r", "--root", type=str,
-                    default='/media/lenovo/Extreme Pro/Bohr data/20240201_br_utah_interception_120_semi_brain_control_4_001', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004', 
                     metavar='/the/root/path/your/data/located/in', help='root folder')
 parser.add_argument("-d", "--data", type=str,
-                    default='/media/lenovo/Extreme Pro/Bohr data/20240201_br_utah_interception_120_semi_brain_control_4_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
