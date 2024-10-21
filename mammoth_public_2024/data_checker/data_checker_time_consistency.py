@@ -68,6 +68,14 @@ def run(data_dir, output_dir):
     with open(os.path.join(output_dir, 'diff_time_mean.txt'), 'w') as file:
         file.write(f'{diff_time_mean}\n')
 
+    with open(os.path.join(output_dir, 'qc_summary.json'), 'w') as file:
+        summary = {}
+        summary['diff_time [q1, median, q3]'] = [np.percentile(diff_time-diff_time_mean, 25),
+                                                 np.percentile(diff_time-diff_time_mean, 50),
+                                                 np.percentile(diff_time-diff_time_mean, 75)]
+        json.dump(summary, file)
+
+
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,

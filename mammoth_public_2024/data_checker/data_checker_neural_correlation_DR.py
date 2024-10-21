@@ -222,6 +222,14 @@ def run(data_dir, output_dir, description_dir):
         
     plt.savefig(os.path.join(output_dir, 'sliding_R2.png'), dpi=300, bbox_inches = 'tight')
 
+    with open(os.path.join(description_dir, 'qc_summary.json'), "r") as file:
+        summary = json.load(file)
+
+        summary['neural correlation R^2 (MO+/-1s)'] = time_suc
+    
+    with open(os.path.join(output_dir, 'qc_summary.json'), 'w') as file:
+        json.dump(summary, file)
+
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,

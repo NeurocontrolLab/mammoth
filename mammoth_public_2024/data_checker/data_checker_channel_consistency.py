@@ -7,6 +7,7 @@ Created on Tue Aug 27 14:28:49 2024
 """
 
 import os
+import json
 from tqdm import tqdm
 import numpy as np
 import shutil
@@ -69,6 +70,14 @@ def run(data_dir, output_dir, root_dir):
     sns.barplot(x="chn",y="chn_per",data=df)
     save_path = f'{output_dir}/chn_consis_summary.png'
     plt.savefig(save_path)
+
+    with open(os.path.join(output_dir, 'qc_summary.json'), "r") as file:
+        summary = json.load(file)
+        summary['channel consistency'] = df
+    
+    with open(os.path.join(output_dir, 'qc_summary.json'), 'w') as file:
+        json.dump(summary, file)
+
 
     #%% single-channel waveform
 
