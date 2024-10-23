@@ -2,12 +2,12 @@
 
 #SBATCH -J bohrchecking
 #SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/Bohr/checking_job_%j.out 
-#SBATCH -p q_gpu_c
-#SBATCH --gres=gpu:1
+# SBATCH -p q_gpu_c
+# SBATCH --gres=gpu:1
 
-# SBATCH -n 1
-# SBATCH -p q_fat_2
-# SBATCH -c 4
+#SBATCH -n 1
+#SBATCH -p q_fat_2
+#SBATCH -c 4
 
 for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/*; do
 
