@@ -10,7 +10,7 @@ import os
 import glob
 import argparse
 import hdf5storage
-from user_input_entry_collection import Ml2NeoTrial as mt
+from dependencies.user_input_entry_collection import Ml2NeoTrial as mt
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
 
 def format_file(root_dir, output_dir):

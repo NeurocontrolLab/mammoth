@@ -6,8 +6,8 @@ Created on Fri Oct 23 16:12:28 2020
 @author: cuilab
 """
 import os
-import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# import sys
+# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import yaml
 from _data_operation_bhv_data import BuilddataOperationMap as bhv_BuilddataOperationMap
