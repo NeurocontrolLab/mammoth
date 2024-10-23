@@ -8,7 +8,8 @@ Created on Sun Feb 14 22:03:01 2021
 
 import argparse
 import os
-import sys
+# import sys
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import yaml
 import copy
 import pandas as pd
@@ -17,7 +18,6 @@ import quantities as pq
 import joblib
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dependencies.user_input_entry_collection import AIEShare as As
 import re
 import shutil

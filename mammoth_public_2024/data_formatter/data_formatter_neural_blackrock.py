@@ -8,6 +8,8 @@ Created on Sun Feb 14 22:03:01 2021
 
 import os
 import sys
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import yaml
 import copy
 from tqdm import tqdm
@@ -21,8 +23,6 @@ import quantities as pq
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
 from probeinterface import read_probeinterface
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dependencies.user_input_entry_collection import BRShare as bs
 
 #%% define functions
