@@ -370,9 +370,13 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
         os.mkdir(output_dir)
         
     nwb_saver = NWBInterface()
-    nwb_saver.save_nwb(blockdata = neuralblock, 
-                       filename = os.path.join(output_dir, 'neural_data_no_sort.nwb'))
-        
+
+    if len(content_list) == 1:
+        nwb_saver.save_nwb(blockdata = neuralblock, 
+                        filename = os.path.join(output_dir, 'neural_data_no_sort.nwb'))
+    elif 'spike' in content_list:
+         nwb_saver.save_nwb(blockdata = neuralblock, 
+                        filename = os.path.join(output_dir, 'neural_data.nwb'))
 
 #%% parse the input arguments
 parser = argparse.ArgumentParser(argument_default=None)
