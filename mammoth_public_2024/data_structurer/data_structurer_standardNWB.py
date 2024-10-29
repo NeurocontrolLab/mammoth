@@ -70,6 +70,7 @@ def run(root_dir, map_path, output_dir):
     nwb_dict['subject'] = subject
     nwb_dict['keywords'] = ["ecephys", "monkey", "motor control"]
     del nwb_dict['experiment_name']
+    del nwb_dict['task']
 
 
     nwbfile = NWBFile(
