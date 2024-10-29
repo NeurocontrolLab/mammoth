@@ -81,8 +81,10 @@ def run(root_dir, map_path, output_dir):
     # Load probe
     probegroup = read_probeinterface(map_path)
 
-    device_dict = {'name': 'Utah array', 'description': '64 x 4',
-                   'manufacturer': 'BlackRock Microsystem'} #TODO
+    probe_info_str = os.path.basename(map_path).split(".")[0]
+    probe_info = probe_info_str.split("_")
+    device_dict = {'name': '%s array' % probe_info[1], 'description': '%s' % probe_info[2],
+                   'manufacturer': '%s Microsystem' % probe_info[4]} 
 
     # set device and electrode table
     device = nwbfile.create_device(name=device_dict['name'],
@@ -91,7 +93,7 @@ def run(root_dir, map_path, output_dir):
 
     # get electrode table
     # nshanks = len(probegroup.probes)
-    shank_location = ['PMd', 'M1', 'S1', 'A7']  #TODO
+    shank_location = probe_info[3].split("-")
     ETR_list = []
 
     for ishank, p in enumerate(probegroup.probes):
