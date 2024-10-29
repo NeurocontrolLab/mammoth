@@ -8,7 +8,7 @@ Created on Sun Feb 14 22:03:01 2021
 
 import os
 import sys
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import yaml
 import copy
@@ -140,7 +140,7 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
             InputData['Spike']['shank ' + shank_ind]['chn ' + str(ci['ch'])]\
                 ['clu ' + str(ci['cluster_id'])]['spk']['description'] = spike_description
         
-        return InputData
+    return InputData
     
 
 def convert_TCR(data, timestamp, data_template, probegroup, bandpass_params):    
@@ -382,18 +382,18 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2.json')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4.json')
 
 parser.add_argument('-flag', '--sort_flag', 
-                    default='0')
+                    default='1')
 
 parser.add_argument('-sorter', '--sorter_name', 
                     default='kilosort2_5')

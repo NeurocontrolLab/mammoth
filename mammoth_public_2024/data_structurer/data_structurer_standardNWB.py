@@ -81,8 +81,8 @@ def run(root_dir, map_path, output_dir):
     # Load probe
     probegroup = read_probeinterface(map_path)
 
-    device_dict = {'name': 'Utah array', 'description': '96 x 2',
-                'manufacturer': 'BlackRock Microsystem'} #TODO
+    device_dict = {'name': 'Utah array', 'description': '64 x 4',
+                   'manufacturer': 'BlackRock Microsystem'} #TODO
 
     # set device and electrode table
     device = nwbfile.create_device(name=device_dict['name'],
@@ -90,8 +90,8 @@ def run(root_dir, map_path, output_dir):
                                 manufacturer=device_dict['manufacturer'])
 
     # get electrode table
-    nshanks = len(probegroup.probes)
-    shank_location = ['PMd', 'M1']  #TODO
+    # nshanks = len(probegroup.probes)
+    shank_location = ['PMd', 'M1', 'S1', 'A7']  #TODO
     ETR_list = []
 
     for ishank, p in enumerate(probegroup.probes):
@@ -132,7 +132,7 @@ def run(root_dir, map_path, output_dir):
                             description="time scale")
 
     # add spike data sorted by kilosort into nwbfile.units
-    kilo = [i for i in neural_data.segments if i.name=='kilosort2.5'][0]
+    kilo = [i for i in neural_data.segments if 'kilosort2.5' in i.name][0]
     nunits = len(kilo.spiketrains)
 
     # b = kilo.spiketrains[0].description["chn_meta"]
@@ -301,30 +301,33 @@ def run(root_dir, map_path, output_dir):
 
 
     # add Vicon data
+    
     vm = [i for i in bhv_data.segments 
         if i.name=='Vicon motion'][0].irregularlysampledsignals[0]
 
     vm_time = vm.times.rescale(pq.s).magnitude
 
-    '''---Align Vicon Motion data time to aligned behavioral data time---'''
-    vicon_start_time = vm_time[0]
-    marker_vicon_difference = marker_time - vicon_start_time
-    vm_time = vm_time + marker_vicon_difference
-    '''------------------------------------------------------------------'''
+    if len(vm.times)>0:
+        
+        '''---Align Vicon Motion data time to aligned behavioral data time---'''
+        vicon_start_time = vm_time[0]
+        marker_vicon_difference = marker_time - vicon_start_time
+        vm_time = vm_time + marker_vicon_difference
+        '''------------------------------------------------------------------'''
 
-    vicon_pos_series = SpatialSeries(
-        name='ViconMotion',
-        data=np.array(vm),
-        unit='mm',
-        reference_frame='Zero-position was set by Vicon before every experiment.\
-            The position was closed to the monkey sitting position',
-        timestamps=vm_time, #vm.times.rescale(pq.s).magnitude,
-        description='Finger position recorded by Vicon Motion System.\
-            The Marker 24 represents the start of recording. \
-            The three columns are x, y, and z positions'
-    )
-    behavior_module.add(vicon_pos_series)
-    del vm, vm_time
+        vicon_pos_series = SpatialSeries(
+            name='ViconMotion',
+            data=np.array(vm),
+            unit='mm',
+            reference_frame='Zero-position was set by Vicon before every experiment.\
+                The position was closed to the monkey sitting position',
+            timestamps=vm_time, #vm.times.rescale(pq.s).magnitude,
+            description='Finger position recorded by Vicon Motion System.\
+                The Marker 24 represents the start of recording. \
+                The three columns are x, y, and z positions'
+        )
+        behavior_module.add(vicon_pos_series)
+        del vm, vm_time
 
     # add object info in each frame
     def unpack_objects(d):
@@ -511,23 +514,26 @@ def run(root_dir, map_path, output_dir):
                     (frame_view['time']<trial_view.loc[itrial, 'stop_time'])]
             center = trial_frame['object1'].values[0]['pos']
             
-            target_frame1 = trial_frame['object2'].values[0]['pos']
-            target_frame2 = trial_frame['object2'].values[1]['pos']
+            if len(trial_frame)>1:
+                target_frame1 = trial_frame['object2'].values[0]['pos']
+                target_frame2 = trial_frame['object2'].values[1]['pos']
             
-            a1 = np.mod(np.arctan2(target_frame1[1]-center[1], target_frame1[0]-center[0]),
-                        np.pi*2)
-            a2 = np.mod(np.arctan2(target_frame2[1]-center[1], target_frame2[0]-center[0]),
-                        np.pi*2)
-            
-            w = abs((a2-a1)/(trial_frame['time'].values[1] - trial_frame['time'].values[0])
-                /np.pi*180)*np.sign(np.cross(target_frame1, target_frame2))
+                a1 = np.mod(np.arctan2(target_frame1[1]-center[1], target_frame1[0]-center[0]),
+                            np.pi*2)
+                a2 = np.mod(np.arctan2(target_frame2[1]-center[1], target_frame2[0]-center[0]),
+                            np.pi*2)
+                
+                w = abs((a2-a1)/(trial_frame['time'].values[1] - trial_frame['time'].values[0])
+                        /np.pi*180)*np.sign(np.cross(target_frame1, target_frame2))
+            else:
+                w = np.array([0])
             
             w_cond = all_w[np.argmin(abs(all_w-w))]
         
             trial_view.loc[itrial, 'target_speed'] = w_cond
         
         else:
-            trial_view.loc[itrial, 'target_speed'] = np.nan
+            trial_view.loc[itrial, 'target_speed'] = 0
 
 
     # set trials
@@ -612,14 +618,14 @@ def run(root_dir, map_path, output_dir):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2.json')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
