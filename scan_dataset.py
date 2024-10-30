@@ -136,4 +136,3 @@ args = parser.parse_args()
 
 scan_sessions(args.root, args.output)
 
-print(1)

@@ -34,8 +34,8 @@ def run(data_dir, output_dir, root_dir):
     neural_data = nwb_saver.read_nwb(filename = os.path.join(data_dir,'neural_data.nwb'))
 
     # get TCR and sorted spike data
-    TCR = [i for i in neural_data.segments if i.name=='TCR'][0]
-    kilo = [i for i in neural_data.segments if i.name=='kilosort2.5'][0]
+    TCR = [i for i in neural_data.segments if 'TCR' in i.name][0]
+    kilo = [i for i in neural_data.segments if 'kilosort2.5' in i.name][0]
     
     #%% check consistency
     # compare time (pairwise)
@@ -73,7 +73,8 @@ def run(data_dir, output_dir, root_dir):
 
     with open(os.path.join(output_dir, 'qc_summary.json'), "r") as file:
         summary = json.load(file)
-        summary['channel consistency'] = df
+        summary['channel consistency'] = {"unshuffled": list(df[df['chn']=='unshuffled']['chn_per'].values),
+                                          "shuffled": list(df[df['chn']=='shuffled']['chn_per'].values)}
     
     with open(os.path.join(output_dir, 'qc_summary.json'), 'w') as file:
         json.dump(summary, file)
@@ -122,7 +123,7 @@ def run(data_dir, output_dir, root_dir):
     plt.ioff()
 
     # save results
-    kilo = [i for i in neural_data.segments if i.name=='kilosort2.5'][0]
+    kilo = [i for i in neural_data.segments if 'kilosort2.5' in i.name][0]
     for j in tqdm(kilo.spiketrains):
         #data = {}
         dev_ch = int(j.description['chn'])
@@ -144,13 +145,13 @@ def run(data_dir, output_dir, root_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001', 
                     metavar='/the/root/path/your/data/located/in', help='root folder')
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
