@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J {{subject}}sorting
+#SBATCH -J {{subject}}_sorting
 #SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/sorting_job_%j.out 
 #SBATCH -p q_gpu_c
 #SBATCH --gres=gpu:1

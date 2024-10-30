@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J {{subject}}checking
+#SBATCH -J {{subject}}_checking
 #SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/checking_job_%j.out 
 #SBATCH -p q_gpu_c
 #SBATCH --gres=gpu:1

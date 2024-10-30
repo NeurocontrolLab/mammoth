@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J {{subject}}organizing
+#SBATCH -J {{subject}}_organizing
 #SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/organizing_job_%j.out 
 #SBATCH -n 1
 #SBATCH -c 1

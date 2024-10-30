@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J {{subject}}structuring
+#SBATCH -J {{subject}}_structuring
 #SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/structuring_job_%j.out 
 # SBATCH -p q_gpu_c
 # SBATCH --gres=gpu:1
