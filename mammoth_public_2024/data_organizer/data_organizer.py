@@ -72,7 +72,17 @@ def organize_file(root_dir):
         
         # organize bhv files
         handle_file(target_folder_name_list[3], bhv_name, i, root_dir)
-    
+
+        metadata_file = [f for f in i[2] if ('.csv' in f) and ('meta' in f)]
+        if len(metadata_file)>0:
+            for k in metadata_file:
+                shutil.move(os.path.join(i[0], k), os.path.join(i[0], 'bhv'))
+
+        vicondata_file = [f for f in i[2] if ('Cal' in f) and (('.csv' in f) or ('.c3d' in f))]
+        if len(vicondata_file)>0:
+            for k in vicondata_file:
+                shutil.move(os.path.join(i[0], k), os.path.join(i[0], 'bhv'))
+
     # delete directory with unclassified names
     for i in os.listdir(root_dir):
         if (not i in target_folder_name_list) and (not '.' in i):
@@ -84,7 +94,7 @@ def organize_file(root_dir):
 #%%
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Brain_control/20240416_sg_fa_2d_centerout_brain_control', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001', 
                     metavar='/the/root/path/your/data/located/in', help='root folder')
 
 args = parser.parse_args()

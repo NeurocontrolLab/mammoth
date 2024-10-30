@@ -105,6 +105,8 @@ def format_file(root_dir, output_dir):
 
 
     root_directory = os.path.join(root_dir,'bhv')
+    
+
     file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and (not 'meta' in i)]
     if len(file_pattern)!=0:
         file_path = os.path.join(root_directory, file_pattern[0])  # 这里替换成你的C3D文件路径
