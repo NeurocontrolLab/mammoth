@@ -15,16 +15,17 @@ import copy
 import pandas as pd
 import numpy as np
 import quantities as pq
-import joblib
+# import joblib
 from SmartNeo.user_layer.dict_to_neo import templat_neo
 from SmartNeo.interface_layer.nwb_interface import NWBInterface
 from dependencies.user_input_entry_collection import AIEShare as As
 import re
-import shutil
+# import shutil
 import json
 import os
 import fnmatch
 from datetime import datetime
+import h5py
 
 def find_files_with_name(root_dir, pattern):
     """查找指定目录及其子目录中符合给定模式的文件"""
@@ -104,23 +105,57 @@ def format_file(root_dir, output_dir):
         InputList.append(InputData)
 
 
-    root_directory = os.path.join(root_dir,'bhv')
-    
+    def read_hdf5_reference(ref, file):
+        """递归读取 HDF5 object reference 内容."""
+        data = file[ref]
+        if isinstance(data, h5py.Dataset):
+            return data[()] # 返回数据集内容
+        elif isinstance(data, h5py.Group):
+            result = {}
+            for key, item in data.items():
+                if isinstance(item, h5py.Dataset):
+                    result[key] = item[()] # 读取数据集内容
+                elif isinstance(item, h5py.Group) or isinstance(item, h5py.Reference):
+                    result[key] = read_hdf5_reference(item.ref, file) # 递归读取
+                    return result
+                elif isinstance(ref, h5py.Reference):
+                    return read_hdf5_reference(file[ref], file) # 如果是 Reference，则递归读取
+                else:
+                    return None # 其他情况，返回 None
 
-    file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and (not 'meta' in i)]
+    root_directory = os.path.join(root_dir,'bhv')
+    file_pattern = [i for i in os.listdir(root_directory) if ('mat' in i)]
     if len(file_pattern)!=0:
         file_path = os.path.join(root_directory, file_pattern[0])  # 这里替换成你的C3D文件路径
-        df = pd.read_csv(file_path, skiprows=3, index_col=0)
-        df.dropna(how='all', inplace=True)
 
-        InputData = copy.deepcopy(Template)
-        InputData['IrregularSampledData'] = {}
-        InputData['IrregularSampledData']['irr'] = {}
-        InputData['IrregularSampledData']['irr'] = templat_neo['irr'].copy()
-        InputData['IrregularSampledData']['irr']['signal'] = df[['X', 'Y', 'Z']].iloc[1:].to_numpy().astype(float)*pq.mm
-        InputData['IrregularSampledData']['irr']['times'] = np.array(df.iloc[1:].index.to_list())/100*pq.s
-        InputData['name'] = 'Vicon motion'
-        InputList.append(InputData)
+        with h5py.File(file_path, 'r') as f:
+            dmat = f['Unlabel']
+            data = [read_hdf5_reference(ref, f) for ref in dmat[0]]
+
+            InputData = copy.deepcopy(Template)
+            InputData['IrregularSampledData'] = {}
+            InputData['IrregularSampledData']['irr'] = {}
+            InputData['IrregularSampledData']['irr'] = templat_neo['irr'].copy()
+            InputData['IrregularSampledData']['irr']['signal'] = data[1].T.astype(float)*pq.mm
+            InputData['IrregularSampledData']['irr']['times'] = data[0][0, :]/100*pq.s
+            InputData['name'] = 'Vicon motion'
+            InputList.append(InputData)
+
+    else:
+        file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and (not 'meta' in i)]
+        if len(file_pattern)!=0:
+            file_path = os.path.join(root_directory, file_pattern[0])  # 这里替换成你的C3D文件路径
+            df = pd.read_csv(file_path, skiprows=3, index_col=0)
+            df.dropna(how='all', inplace=True)
+
+            InputData = copy.deepcopy(Template)
+            InputData['IrregularSampledData'] = {}
+            InputData['IrregularSampledData']['irr'] = {}
+            InputData['IrregularSampledData']['irr'] = templat_neo['irr'].copy()
+            InputData['IrregularSampledData']['irr']['signal'] = df[['X', 'Y', 'Z']].iloc[1:].to_numpy().astype(float)*pq.mm
+            InputData['IrregularSampledData']['irr']['times'] = np.array(df.iloc[1:].index.to_list())/100*pq.s
+            InputData['name'] = 'Vicon motion'
+            InputList.append(InputData)
 
     #%% operate the dicts
     continuous_bhv_block = As.data_input(user_data = InputList,
@@ -139,10 +174,10 @@ def format_file(root_dir, output_dir):
 #%% parse the input arguments
 parser = argparse.ArgumentParser(description='extract trial info')
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
