@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J {{subject}}_sorting
-#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/sorting_job_%j.out 
+#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/logs/{{subject}}/sorting_job_%j.out 
 #SBATCH -p q_gpu_c
 #SBATCH --gres=gpu:1
 
@@ -19,6 +19,6 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
         continue
     fi
 
-    ulimit -n 10240 && /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_sorter_blackrock.py -sorter 'kilosort2_5' -r $dir -mp {{mappath}} -o $dir/sorted_data -cp /AMAX/cuihe_lab/cuilab_share/sorter_container
+    ulimit -n 10240 && /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_sorter/data_sorter_blackrock.py -sorter 'kilosort2_5' -r $dir -mp {{mappath}} -o $dir/sorted_data -cp /AMAX/cuihe_lab/cuilab_share/sorter_container
 
 done

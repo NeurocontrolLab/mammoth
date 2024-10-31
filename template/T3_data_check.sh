@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J {{subject}}_checking
-#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/checking_job_%j.out 
+#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/logs/{{subject}}/checking_job_%j.out 
 #SBATCH -p q_gpu_c
 #SBATCH --gres=gpu:1
 
@@ -26,7 +26,7 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
     echo $dir
     if ! find $dir/description -name "channel_map.png" | read -r; then
       echo "plot channel map"
-        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker/data_checker_channel_map_plotting.py -mp {{mappah}} -o $dir/description
+        /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_checker/data_checker_channel_map_plotting.py -mp {{mappath}} -o $dir/description
     fi
     
     if ! find $dir/description -name "Time_consistency_check.png" | read -r; then

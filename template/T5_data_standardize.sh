@@ -11,12 +11,6 @@
 
 
 for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recording/*; do
-    target_folder="formatted_data"
- 
-    if ! find $dir -type d -name $target_folder | read; then
-        continue
-    fi
-
     keyword='wrong'
 
     if echo $dir | grep -q $keyword; then
@@ -28,6 +22,18 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
     if echo $dir | grep -q $keyword; then
         continue
     fi
+
+    target_folder="formatted_data"
+ 
+    if ! find $dir -type d -name $target_folder | read; then
+        continue
+    fi
+    
+    target_folder="sorted_data"
+ 
+    if ! find $dir -type d -name $target_folder | read; then
+        continue
+    fi
     
     echo $dir
     if ! find $dir/formatted_data -name "neural_data.nwb" | read -r; then
@@ -37,7 +43,7 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
       for sdir in $dir/sorted_data/kilosort2_5_output/*; do
       
         sorting_files=$(find $dir -type f -name "cluster_info.tsv" -exec printf "%s\n" {} +)
-        if ![ -n "$sorting_files" ]; then
+        if [ -z "$sorting_files" ]; then
             s=0
         #    echo $sorting_files
         fi

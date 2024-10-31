@@ -15,6 +15,7 @@ import spikeinterface.extractors as se
 import spikeinterface.sorters as ss
 from probeinterface import read_probeinterface
 
+os.environ["PATH"] = "/usr/nzx-cluster/apps/singularity/3.7.0/bin:"+os.environ["PATH"]
 
 def sorting(sorter, root_dir, map_path, output_dir, container_dir):
     #%% load probe
@@ -92,18 +93,18 @@ def sorting(sorter, root_dir, map_path, output_dir, container_dir):
         if os.path.exists(sp):
             continue
     
-        try:
-            sorting = ss.run_sorter(sorter_name=sorter,
-                                    recording=sliced_recording,     
-                                    output_folder=sp,
-                                    singularity_image=True,
-                                    verbose = True,
-                                    delete_tmp_files=False,
-                                    delete_recording_dat = True,
-                                    n_jobs = 12)
-        except:
-            os.rename(sp,sp+'_wrong') # if something wrong happened, change the folder name
-            wrong_flag += 1
+        # try:
+        sorting = ss.run_sorter(sorter_name=sorter,
+                                recording=sliced_recording,     
+                                output_folder=sp,
+                                singularity_image=True,
+                                verbose = True,
+                                delete_tmp_files=False,
+                                delete_recording_dat = True,
+                                n_jobs = 12)
+        # except:
+        os.rename(sp,sp+'_wrong') # if something wrong happened, change the folder name
+        wrong_flag += 1
 
     # if wrong_flag == 0:
     #     with open(os.path.join(data_path_, 'autokilo.txt'), 'w') as file:
@@ -120,13 +121,13 @@ parser.add_argument('-sorter', '--sorter_name',
                     default='kilosort2_5')
 
 parser.add_argument('-r', '--root', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller/nezha-gai.json')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
 
 parser.add_argument('-o', '--output',
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001/sorted_data')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001/sorted_data')
 
 parser.add_argument('-cp', '--container', 
                     default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller')

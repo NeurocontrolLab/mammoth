@@ -519,9 +519,10 @@ def run(root_dir, map_path, output_dir):
             trial_frame = \
                 frame_view[(frame_view['time']>trial_view.loc[itrial, 'target_on_time'])&
                     (frame_view['time']<trial_view.loc[itrial, 'stop_time'])]
-            center = trial_frame['object1'].values[0]['pos']
             
             if len(trial_frame)>1:
+                center = trial_frame['object1'].values[0]['pos']
+
                 target_frame1 = trial_frame['object2'].values[0]['pos']
                 target_frame2 = trial_frame['object2'].values[1]['pos']
             
@@ -625,14 +626,14 @@ def run(root_dir, map_path, output_dir):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241009_Interception_002', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 
 parser.add_argument('-mp', '--map_path', 
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241009_Interception_002/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

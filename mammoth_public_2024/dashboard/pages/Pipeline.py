@@ -97,7 +97,7 @@ for i, sn in enumerate(step_names):
 
             result = subprocess.run(["sbatch", script_file_path], capture_output=True, text=True)
             curr_job = result.stdout.split("job ")[-1]
-            log.loc[len(log)] = [curr_job, script_file_path, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
+            log.loc[len(log)] = [int(curr_job), script_file_path, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
             log.to_csv(log_path)
 
 
@@ -116,7 +116,7 @@ if st.button("Show me!", key='show_job_status'):
 st.header("Check previous jobs")
 previous_jobs = ["job %s for %s with %s at %s" % (i["JOBID"], i["script_path"].split(os.sep)[-2], i["script_path"].split(os.sep)[-1], i["datetime"])
                  for _, i in log.iterrows()]
-previous_job = st.selectbox('Select from latest 20 jobs', [" "]+list(reversed(previous_jobs[:20])), 0, key='select_previous_job')
+previous_job = st.selectbox('Select from latest 20 jobs', [" "]+list(reversed(previous_jobs[-20:])), 0, key='select_previous_job')
 if previous_job and previous_job!=" ":
     with st.expander("Check job output ↓"):
         sdir = os.path.join(code_dir, "logs", previous_job.split("for ")[1].split("_")[0])
