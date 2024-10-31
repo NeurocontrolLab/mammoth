@@ -145,17 +145,21 @@ def format_file(root_dir, output_dir):
         file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and (not 'meta' in i)]
         if len(file_pattern)!=0:
             file_path = os.path.join(root_directory, file_pattern[0])  # 这里替换成你的C3D文件路径
-            df = pd.read_csv(file_path, skiprows=3, index_col=0)
-            df.dropna(how='all', inplace=True)
+            try:
+                df = pd.read_csv(file_path, skiprows=3, index_col=0)
+            except:
+                print("Error: no file or open failure")
+            else:
+                df.dropna(how='all', inplace=True)
 
-            InputData = copy.deepcopy(Template)
-            InputData['IrregularSampledData'] = {}
-            InputData['IrregularSampledData']['irr'] = {}
-            InputData['IrregularSampledData']['irr'] = templat_neo['irr'].copy()
-            InputData['IrregularSampledData']['irr']['signal'] = df[['X', 'Y', 'Z']].iloc[1:].to_numpy().astype(float)*pq.mm
-            InputData['IrregularSampledData']['irr']['times'] = np.array(df.iloc[1:].index.to_list())/100*pq.s
-            InputData['name'] = 'Vicon motion'
-            InputList.append(InputData)
+                InputData = copy.deepcopy(Template)
+                InputData['IrregularSampledData'] = {}
+                InputData['IrregularSampledData']['irr'] = {}
+                InputData['IrregularSampledData']['irr'] = templat_neo['irr'].copy()
+                InputData['IrregularSampledData']['irr']['signal'] = df[['X', 'Y', 'Z']].iloc[1:].to_numpy().astype(float)*pq.mm
+                InputData['IrregularSampledData']['irr']['times'] = np.array(df.iloc[1:].index.to_list())/100*pq.s
+                InputData['name'] = 'Vicon motion'
+                InputList.append(InputData)
 
     #%% operate the dicts
     continuous_bhv_block = As.data_input(user_data = InputList,
@@ -174,10 +178,10 @@ def format_file(root_dir, output_dir):
 #%% parse the input arguments
 parser = argparse.ArgumentParser(description='extract trial info')
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241022_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241022_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

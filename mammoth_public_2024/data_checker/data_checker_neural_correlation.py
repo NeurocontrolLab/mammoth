@@ -74,6 +74,9 @@ def run(data_dir, output_dir, description_dir):
     info_time = np.array(bhv_trial_info.times.rescale(pq.s).magnitude).squeeze()  
     info_df = pd.DataFrame.from_dict(info)  
     
+    if info_df.iloc[-1, 1] == 'start':
+        info_df = info_df.iloc[:-1]
+
     description['AbsoluteTrialStartTime'] = \
         info_time[info_df[info_df['status']=='start'].index.tolist()]
     description['TrialError'] = \
@@ -233,13 +236,13 @@ def run(data_dir, output_dir, description_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002/formatted_data', 
                     metavar='/the/path/your/nwb/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 parser.add_argument("-s", "--description", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002/description', 
                     metavar='/the/path/your/descriptive/data/located/in', help='root folder')
 
 args = parser.parse_args()
