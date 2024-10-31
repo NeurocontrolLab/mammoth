@@ -105,12 +105,12 @@ def sorting(sorter, root_dir, map_path, output_dir, container_dir):
             os.rename(sp,sp+'_wrong') # if something wrong happened, change the folder name
             wrong_flag += 1
 
-    if wrong_flag == 0:
-        with open(os.path.join(data_path_, 'autokilo.txt'), 'w') as file:
-            file.write("")    
-    else:
-        with open(os.path.join(data_path_, 'wrong_shanks_%d.txt' % wrong_flag), 'w') as file:
-            file.write("")  
+    # if wrong_flag == 0:
+    #     with open(os.path.join(data_path_, 'autokilo.txt'), 'w') as file:
+    #         file.write("")    
+    # else:
+    #     with open(os.path.join(data_path_, 'wrong_shanks_%d.txt' % wrong_flag), 'w') as file:
+    #         file.write("")  
 
 
 #%%

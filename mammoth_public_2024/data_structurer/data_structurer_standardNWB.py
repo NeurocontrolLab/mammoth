@@ -72,6 +72,10 @@ def run(root_dir, map_path, output_dir):
     del nwb_dict['experiment_name']
     del nwb_dict['task']
 
+    for k, v in nwb_dict.items():
+        if isinstance(v, float):
+            if np.isnan(v):
+                nwb_dict[k] = ''
 
     nwbfile = NWBFile(
         **nwb_dict
@@ -621,14 +625,14 @@ def run(root_dir, map_path, output_dir):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 
 parser.add_argument('-mp', '--map_path', 
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241008_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_002/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
