@@ -15,7 +15,12 @@ import spikeinterface.extractors as se
 import spikeinterface.sorters as ss
 from probeinterface import read_probeinterface
 
-os.environ["PATH"] = "/usr/nzx-cluster/apps/singularity/3.7.0/bin:"+os.environ["PATH"]
+#os.environ["PATH"] = "/usr/nzx-cluster/apps/singularity/3.7.0/bin:"+os.environ["PATH"]
+#os.environ["PATH"] = "/AMAX/cuihe_lab/share_rw/package/go/bin:"+os.environ["PATH"]
+#os.environ["PATH"] = "/usr/nzx-cluster/apps/cuda/12.3/bin:"+os.environ["PATH"]
+#os.environ["LD_LIBRARY_PATH"] = "/usr/nzx-cluster/apps/cuda/12.3/lib64:"+os.environ["LD_LIBRARY_PATH"]
+#os.environ["CUDA_HOME"] = "/usr/nzx-cluster/apps/cuda/12.3:"+os.environ["CUDA_HOME"]
+
 
 def sorting(sorter, root_dir, map_path, output_dir, container_dir):
     #%% load probe
@@ -93,18 +98,18 @@ def sorting(sorter, root_dir, map_path, output_dir, container_dir):
         if os.path.exists(sp):
             continue
     
-        # try:
-        sorting = ss.run_sorter(sorter_name=sorter,
-                                recording=sliced_recording,     
-                                output_folder=sp,
-                                singularity_image=True,
-                                verbose = True,
-                                delete_tmp_files=False,
-                                delete_recording_dat = True,
-                                n_jobs = 12)
-        # except:
-        os.rename(sp,sp+'_wrong') # if something wrong happened, change the folder name
-        wrong_flag += 1
+        try:
+            sorting = ss.run_sorter(sorter_name=sorter,
+                                    recording=sliced_recording,     
+                                    output_folder=sp,
+                                    singularity_image=True,
+                                    verbose = True,
+                                    delete_tmp_files=False,
+                                    delete_recording_dat = True,
+                                    n_jobs = 12)
+        except:
+           os.rename(sp,sp+'_wrong') # if something wrong happened, change the folder name
+        #    wrong_flag += 1
 
     # if wrong_flag == 0:
     #     with open(os.path.join(data_path_, 'autokilo.txt'), 'w') as file:

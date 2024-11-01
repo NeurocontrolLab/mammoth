@@ -5,6 +5,10 @@
 #SBATCH -p q_gpu_c
 #SBATCH --gres=gpu:1
 
+module load cuda/12.3
+module load singularity
+
+
 
 for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recording/*; do
     target_folder="sorted_data"
