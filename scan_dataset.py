@@ -27,6 +27,7 @@ def get_sessions(root_dir):
                                                'session': relative_path[3],
                                                'path': dir_path_i},
                                                ignore_index=True)
+                                               
             else:
                 break                                 
     
@@ -38,6 +39,7 @@ def get_sessions(root_dir):
 
 def scan_sessions(root_dir, output_dir):
     f_session_df = get_sessions(root_dir)
+    f_session_df = f_session_df[f_session_df['subject']!='NDT']
      
     for i in f_session_df.index:
         spath = f_session_df.loc[i, 'path']
