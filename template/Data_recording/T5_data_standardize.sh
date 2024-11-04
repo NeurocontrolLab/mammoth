@@ -42,9 +42,9 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
       s=1      
       for sdir in $dir/sorted_data/kilosort2_5_output/*; do
       
-        sorting_files=$(find $dir -type f -name "cluster_info.tsv" -exec printf "%s\n" {} +)
-        if [ -z "$sorting_files" ]; then
+        if ! find $sdir -name "cluster_info.tsv" | read -r; then
             s=0
+            break
         #    echo $sorting_files
         fi
       done
@@ -54,6 +54,7 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
    
       else
           echo "manual sorting not yet finished"
+          continue
       fi
     fi
 

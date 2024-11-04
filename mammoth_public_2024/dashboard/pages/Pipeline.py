@@ -84,7 +84,7 @@ for i, sn in enumerate(step_names):
             else:
                 st.write("Generating a new script...")
                 
-                template_dir = os.path.join(code_dir, 'template')
+                template_dir = os.path.join(code_dir, 'template', curr_type)
                 template_file = [f for f in os.listdir(template_dir) if ('.' in f) and (sn.lower() in f.lower())][0]
                 with open(os.path.join(template_dir, template_file), "r") as template:
                     script_content = template.read()

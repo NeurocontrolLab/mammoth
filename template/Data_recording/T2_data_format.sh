@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J {{subject}}_formatting
-#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/formatting_job_%j.out 
+#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/logs/{{subject}}/formatting_job_%j.out 
 # SBATCH -p q_gpu_c
 # SBATCH --gres=gpu:1
 

@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #SBATCH -J {{subject}}_ofc
-#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/{{subject}}/ofc_job_%j.out 
+#SBATCH -o /AMAX/cuihe_lab/cuilab_share/MAMMOTH/logs/{{subject}}/ofc_job_%j.out 
 #SBATCH -n 1
 #SBATCH -c 1
 #SBATCH -p q_fat_2
 
-for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recording/*; do
+for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Brain_control/*; do
     
-    if ![ -d $dir]; then
+    if [! -d $dir]; then
       continue
     fi  
 
@@ -20,6 +20,11 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
 
     keyword='check'
 
+    if echo $dir | grep -q $keyword; then
+        continue
+    fi
+    
+    keyword='ndt_bmi_log'
     if echo $dir | grep -q $keyword; then
         continue
     fi
@@ -40,7 +45,7 @@ for dir in /AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/{{subject}}/Data_recor
 
     if ! find $dir/formatted_data -name "continuous_behavior.nwb" | read -r; then
       echo "integrate continuous behavior"
-      /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_formatter/data_formatter_bhv_continuous.py -r $dir -o $dir/formatted_data
+      /AMAX/cuihe_lab/share_rw/anaconda3/envs/smartneo_env/bin/python /AMAX/cuihe_lab/cuilab_share/MAMMOTH/mammoth_public_2024/data_formatter/data_formatter_bhv_continuous_BC.py -r $dir -o $dir/formatted_data
     fi
 
 
