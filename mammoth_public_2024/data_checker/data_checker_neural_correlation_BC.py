@@ -19,7 +19,6 @@ from sklearn.model_selection import cross_val_score
 from scipy import signal
 from scipy.ndimage import gaussian_filter
 
-
 def run(data_dir, output_dir, description_dir):
 
     #%% read diff time from description
@@ -104,10 +103,6 @@ def run(data_dir, output_dir, description_dir):
         'sampling_period' : 20*pq.ms
     } # spike statistic parameters
 
-    def str2list(s):
-        s = s.strip('[]').split(' ')
-        return [float(i) for i in s if len(i)!=0]
-
     for ind, i in enumerate(trial_pos):
         # this branch means the 'traing flag' needs to be zero
         if not sum(trial_coeff[ind]['training flag'].tolist())==0:
@@ -115,6 +110,7 @@ def run(data_dir, output_dir, description_dir):
         # '20' represents the monkey complete the trial successfully
         if not 20 in trial[ind].labels:
             continue
+        
         pos_time = np.array(i.index)*pq.s
         # parameters for slicing
         kwargs = {'t_start': pos_time[0]-5*is_kwargs['sampling_period'],
@@ -126,7 +122,7 @@ def run(data_dir, output_dir, description_dir):
         pos_input.append(i)
         kwargs_list.append(kwargs)
         trial_ind.append(ind)
-        move_direction.append(np.array([str2list(ele) for ele in i['pos'].to_list()]).squeeze()[-1]) # end pos
+        move_direction.append(np.array(i['pos']).squeeze()[-1]) # end pos
 
     trial_ind = np.array(trial_ind) # for indexing
     sliced_is = SpikeStatistics.preprocessing('instantaneous_rate', 
@@ -155,8 +151,8 @@ def run(data_dir, output_dir, description_dir):
     speed = []
 
     for i,j in zip(pos_input, select_is):
-        traj = np.array([str2list(ele) for ele in i['pos'].tolist()]) # not sure whethe scipy can handle pandas
-        vel = np.array([str2list(ele) for ele in i['vel'].tolist()])
+        traj = np.array([ele for ele in i['pos'].tolist()]) # not sure whethe scipy can handle pandas
+        vel = np.array([ele for ele in i['vel'].tolist()])
         #%% x and y axis of pos and vel, performing resampling and smoothing
         traj_x = gaussian_filter(signal.resample(traj[:,0],j.shape[1]+1)[1::],sigma=1)
         traj_y = gaussian_filter(signal.resample(traj[:,1],j.shape[1]+1)[1::],sigma=1)
@@ -235,13 +231,13 @@ def run(data_dir, output_dir, description_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/formatted_data', 
                     metavar='/the/path/your/nwb/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 parser.add_argument("-s", "--description", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Bohr/Brain_control/20240307_BrUtahInterception120SemiBc_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/description', 
                     metavar='/the/path/your/descriptive/data/located/in', help='root folder')
 
 args = parser.parse_args()
