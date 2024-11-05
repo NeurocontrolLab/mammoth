@@ -118,7 +118,11 @@ def format_file(root_dir, output_dir):
         return parse_data
 
     # frame = [json.loads(i) for i in frame_data]
-    frame = [list(re.search(frame_re_word,i).groups()) for i in frame_data]
+    # for ind, i in enumerate(frame_data):
+    #     if not re.search(frame_re_word, i):
+    #         print(ind)
+
+    frame = [list(re.search(frame_re_word,i).groups()) for i in frame_data if re.search(frame_re_word,i)]
     frame = [{'time':float(i[0]),'frame info':i[1]} for i in frame]
     frame = pd.DataFrame(frame)
     pos = pd.DataFrame(parsor(pos_data, pos_re_word))
@@ -199,10 +203,10 @@ def format_file(root_dir, output_dir):
 #%% parse the input arguments
 parser = argparse.ArgumentParser(description='extract trial info')
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241011_interception_002', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241015_interception_002', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241011_interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241015_interception_002/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
