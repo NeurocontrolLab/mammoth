@@ -32,7 +32,7 @@ def run(data_dir, output_dir):
     if neural_event_labels[0]>60000:
         neural_event_labels = np.array(neural_event_labels)-65280
     
-    neural_event_times = neural_event_times[neural_event_labels!=0]
+    neural_event_times = neural_event_times[neural_event_labels!=0].rescale(pq.s).magnitude * pq.s
     neural_event_labels = neural_event_labels[neural_event_labels!=0]
 
     # get events from trial operating system
@@ -40,7 +40,7 @@ def run(data_dir, output_dir):
     ml_event_labels = np.array(
         [json.loads(i)['Marker'] for i in ml_event_labels0 if isinstance(json.loads(i), dict)])
     marker_idx = [ind for ind, i in enumerate(ml_event_labels0) if isinstance(json.loads(i), dict)]
-    ml_event_times = np.array(bhv_data.segments[0].events[0].times[marker_idx]) * pq.s
+    ml_event_times = bhv_data.segments[0].events[0].times[marker_idx].rescale(pq.s).magnitude * pq.s
 
     # compute distance between two events (time difference)
     li_distance = lambda x, y: 0 if np.abs(x - y)==0 else len(neural_event_labels)
@@ -87,10 +87,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241010_interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241010_interception_002/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

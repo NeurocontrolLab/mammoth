@@ -135,8 +135,10 @@ def scan_sessions(root_dir, output_dir):
                         sum(ch_consist['shuffled'])/len(ch_consist['shuffled'])<0.2) else 0
         
         if not pd.isna(f_session_df.loc[i, 'time_consistent']):
+
             if (f_session_df.loc[i, 'time_consistent'] + f_session_df.loc[i, 'neural_correlation'] <2):
-                os.rename(spath, spath+"_check")
+                if "check" not in spath:
+                    os.rename(spath, spath+"_check")
 
     print('Already scan fit sessions.')  
 
