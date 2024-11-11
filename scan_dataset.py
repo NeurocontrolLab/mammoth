@@ -39,7 +39,8 @@ def get_sessions(root_dir):
 
 def scan_sessions(root_dir, output_dir):
     f_session_df = get_sessions(root_dir)
-    f_session_df = f_session_df[f_session_df['subject']!='NDT']
+    f_session_df = f_session_df[f_session_df['subject'].isin(
+        ['Abel', 'Bohr', 'Darwin', 'Galileo', 'Leibniz', 'Maxwell'])]
      
     for i in f_session_df.index:
         spath = f_session_df.loc[i, 'path']
