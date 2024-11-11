@@ -133,7 +133,11 @@ def scan_sessions(root_dir, output_dir):
                     f_session_df.loc[i, 'channel_consistency'] = 1 if (
                         sum(ch_consist['unshuffled'])/len(ch_consist['unshuffled'])>0.5 and 
                         sum(ch_consist['shuffled'])/len(ch_consist['shuffled'])<0.2) else 0
-               
+        
+        if not pd.isna(f_session_df.loc[i, 'time_consistent']):
+            if (f_session_df.loc[i, 'time_consistent'] + f_session_df.loc[i, 'neural_correlation'] <2):
+                os.rename(spath, spath+"_check")
+
     print('Already scan fit sessions.')  
 
     older = [f for f in os.listdir(output_dir) if ('.csv' in f) and ('dataset_overview' in f)]

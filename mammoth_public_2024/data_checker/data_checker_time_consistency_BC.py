@@ -32,14 +32,8 @@ def run(data_dir, output_dir):
     if neural_event_labels[0]>60000:
         neural_event_labels = np.array(neural_event_labels)-65280
     
-    neural_event_times = neural_event_times[neural_event_labels!=0]
-    neural_event_labels = neural_event_labels[neural_event_labels!=0]
-
     # get events from trial operating system
     ml_event_labels = bhv_data.segments[0].events[0].labels
-    # ml_event_labels = np.array(
-    #     [json.loads(i)['Marker'] for i in ml_event_labels0 if isinstance(json.loads(i), dict)])
-    # marker_idx = [ind for ind, i in enumerate(ml_event_labels0) if isinstance(json.loads(i), dict)]
     ml_event_times = np.array(bhv_data.segments[0].events[0].times) * pq.s
 
     # compute distance between two events (time difference)

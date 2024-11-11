@@ -382,18 +382,18 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241011_interception_002', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241023_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241011_interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241023_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
-# parser.add_argument('-mp', '--map_path', 
-#                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4.json')
-
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+
+# parser.add_argument('-mp', '--map_path', 
+#                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-flag', '--sort_flag', 
                     default='0')

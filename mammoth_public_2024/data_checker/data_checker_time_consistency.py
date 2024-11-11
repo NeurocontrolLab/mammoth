@@ -87,10 +87,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241010_interception_002/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241010_interception_002/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
