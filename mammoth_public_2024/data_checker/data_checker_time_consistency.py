@@ -42,6 +42,15 @@ def run(data_dir, output_dir):
     marker_idx = [ind for ind, i in enumerate(ml_event_labels0) if isinstance(json.loads(i), dict)]
     ml_event_times = bhv_data.segments[0].events[0].times[marker_idx].rescale(pq.s).magnitude * pq.s
 
+    # fix bc-ic mixture
+    # Bohr 10/10, 10/14, 10/15, 10/16, 1
+    align = len(ml_event_labels)
+
+    neural_event_times = neural_event_times[-align::]
+    neural_event_labels = neural_event_labels[-align::]
+
+   
+
     # compute distance between two events (time difference)
     li_distance = lambda x, y: 0 if np.abs(x - y)==0 else len(neural_event_labels)
         # manhattan_distance = lambda x, y: np.abs(x - y)
@@ -52,7 +61,6 @@ def run(data_dir, output_dir):
     # assert len(neural_event_labels)-sum(zero_dir)<(0.005*len(neural_event_labels)), 'wrong alignment'
     # a = (len(neural_event_labels)-sum(zero_dir))
     diff_time = ml_event_times[path1[:,0]]-neural_event_times[path1[:,1]]
-        
 
     def remove_outliers(data, factor=1.5):
         q1 = np.percentile(data, 25)
@@ -87,10 +95,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241018_interception_001_check/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241018_interception_001_check/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

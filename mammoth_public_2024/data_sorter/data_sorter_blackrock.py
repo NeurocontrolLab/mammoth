@@ -126,13 +126,16 @@ parser.add_argument('-sorter', '--sorter_name',
                     default='kilosort2_5')
 
 parser.add_argument('-r', '--root', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240923_interception_001')
+
+# parser.add_argument('-mp', '--map_path', 
+#                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-o', '--output',
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241014_Interception_001/sorted_data')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240923_interception_001/sorted_data')
 
 parser.add_argument('-cp', '--container', 
                     default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller')

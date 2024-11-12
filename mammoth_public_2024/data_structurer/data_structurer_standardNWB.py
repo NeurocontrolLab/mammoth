@@ -70,7 +70,8 @@ def run(root_dir, map_path, output_dir):
     nwb_dict['subject'] = subject
     nwb_dict['keywords'] = ["ecephys", "monkey", "motor control"]
     del nwb_dict['experiment_name']
-    del nwb_dict['task']
+    if 'task' in nwb_dict.keys():
+        del nwb_dict['task']
 
     for k, v in nwb_dict.items():
         if isinstance(v, float):
@@ -626,14 +627,17 @@ def run(root_dir, map_path, output_dir):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241009_Interception_002', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240927_interception_003', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 
+# parser.add_argument('-mp', '--map_path', 
+#                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241009_Interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240927_interception_003/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

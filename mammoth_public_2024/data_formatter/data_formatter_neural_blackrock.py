@@ -108,7 +108,12 @@ def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup
                 continue
             
             f_ch = butter_bandpass_filter(data[:, bch], lowcut, highcut, fs, order=5)
-            mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
+            try:
+                mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
+            except:
+                swi = [i[:-1] for i in swi]
+                mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
+
             # mean_waveform = data[swi,bch].squeeze().mean(1).astype(float)
             
             spike_description = {'clu': float(ci['cluster_id']),
@@ -382,21 +387,21 @@ def format_file(root_dir, map_path, output_dir, content_list, sorter=None):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241023_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240927_interception_003', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20241023_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240927_interception_003/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
-parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
-
 # parser.add_argument('-mp', '--map_path', 
-#                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
+#                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+
+parser.add_argument('-mp', '--map_path', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-flag', '--sort_flag', 
-                    default='0')
+                    default='1')
 
 parser.add_argument('-sorter', '--sorter_name', 
                     default='kilosort2_5')

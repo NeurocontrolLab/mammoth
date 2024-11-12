@@ -45,7 +45,10 @@ def scan_sessions(root_dir, output_dir):
     for i in f_session_df.index:
         spath = f_session_df.loc[i, 'path']
         
-        dir_list = next(os.walk(spath))[1]
+        try:
+            dir_list = next(os.walk(spath))[1]
+        except:
+            continue
         
         # organized
         f_session_df.loc[i, 'organized'] = int(
@@ -67,6 +70,24 @@ def scan_sessions(root_dir, output_dir):
              0 if not os.path.exists(os.path.join(spath, 'description')) 
              else int('qc_summary.json' in 
                       os.listdir(os.path.join(spath, 'description'))))
+        
+        if os.path.exists(os.path.join(spath, 'description', 'qc_summary.json')):
+            with open(os.path.join(spath, 'description', 'qc_summary.json'), "r") as file:
+                summary = json.load(file)
+                
+                if len([i for i in summary.keys() if 'diff_time' in i])>0:
+                    diff_time = summary[[i for i in summary.keys() if 'diff_time' in i][0]]
+                    f_session_df.loc[i, 'time_consistency'] = 1 if abs(diff_time[2])<30/1000 else 0
+                
+                if len([i for i in summary.keys() if 'neural correlation' in i])>0:
+                    neural_corr = summary[[i for i in summary.keys() if 'neural correlation' in i][0]]
+                    f_session_df.loc[i, 'neural_correlation'] = 1 if len([i for i in neural_corr if i>0.5])/len(neural_corr)>0.5 else 0
+
+        if 'time_consistency' in f_session_df.columns:    
+            if not pd.isna(f_session_df.loc[i, 'time_consistency']):
+                if (f_session_df.loc[i, 'time_consistency'] + f_session_df.loc[i, 'neural_correlation'] <2):
+                    if "check" not in spath:
+                        os.rename(spath, spath+"_check")
         
         # sorted
         if not os.path.exists(os.path.join(spath, 'sorted_data')):
@@ -119,27 +140,26 @@ def scan_sessions(root_dir, output_dir):
         if os.path.exists(os.path.join(spath, 'description', 'qc_summary.json')):
             with open(os.path.join(spath, 'description', 'qc_summary.json'), "r") as file:
                 summary = json.load(file)
-                
-                if len([i for i in summary.keys() if 'diff_time' in i])>0:
-                    diff_time = summary[[i for i in summary.keys() if 'diff_time' in i][0]]
-                    f_session_df.loc[i, 'time_consistent'] = 1 if abs(diff_time[2])<30/1000 else 0
-                
-                if len([i for i in summary.keys() if 'neural correlation' in i])>0:
-                    neural_corr = summary[[i for i in summary.keys() if 'neural correlation' in i][0]]
-                    f_session_df.loc[i, 'neural_correlation'] = 1 if len([i for i in neural_corr if i>0.5])/len(neural_corr)>0.5 else 0
 
                 if len([i for i in summary.keys() if 'channel consistency' in i])>0:
                     ch_consist = summary[[i for i in summary.keys() if 'channel consistency' in i][0]]
                     f_session_df.loc[i, 'channel_consistency'] = 1 if (
-                        sum(ch_consist['unshuffled'])/len(ch_consist['unshuffled'])>0.5 and 
+                        sum(ch_consist['unshuffled'])/len(ch_consist['unshuffled'])>0.3 and 
                         sum(ch_consist['shuffled'])/len(ch_consist['shuffled'])<0.2) else 0
         
-        if not pd.isna(f_session_df.loc[i, 'time_consistent']):
+        if 'channel_consistency' in f_session_df.columns:
+            if not pd.isna(f_session_df.loc[i, 'channel_consistency']):
 
-            if (f_session_df.loc[i, 'time_consistent'] + f_session_df.loc[i, 'neural_correlation'] <2):
-                if "check" not in spath:
-                    os.rename(spath, spath+"_check")
+                if (f_session_df.loc[i, 'channel_consistency'] <1):
+                    if "check" not in spath:
+                        os.rename(spath, spath+"_check")
 
+    f_session_df = f_session_df.reindex(columns=['subject', 'type', 'session', 'path',
+                                                 'organized', 'metadata', 
+                                                 'TCR', 'bhv', 
+                                                 'TCR_checked', 'time_consistency', 'neural_correlation', 
+                                                 'sorted', 'wrong_shanks', 'unsort_shanks',
+                                                 'Spike+TCR+LFP', 'Spike_checked', 'channel_consistency', 'standardNWB'])
     print('Already scan fit sessions.')  
 
     older = [f for f in os.listdir(output_dir) if ('.csv' in f) and ('dataset_overview' in f)]
