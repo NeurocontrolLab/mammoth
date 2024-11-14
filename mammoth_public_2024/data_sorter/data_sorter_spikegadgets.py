@@ -91,13 +91,13 @@ parser.add_argument('-sorter', '--sorter_name',
                     default='kilosort2_5')
 
 parser.add_argument('-r', '--root', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Nezha/Data_recording/20240319_centerOut_001')
 
 parser.add_argument('-mp', '--map_path', 
                     default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller/nezha-gai.json')
 
 parser.add_argument('-o', '--output',
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Nezha/Data_recording/20240319_centerOut_001/sorted_data')
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Nezha/Data_recording/20240319_centerOut_001/sorted_data')
 
 parser.add_argument('-cp', '--container', 
                     default='/AMAX/cuihe_lab/cuilab_share/Nezha/Code/sorting_controller')

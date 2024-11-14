@@ -284,7 +284,8 @@ def run(root_dir, map_path, output_dir):
     '''---Align behavioral data time to neural data time---''' 
     event_time = event_time - time_difference
     global marker_time
-    marker_time = event_time[np.array(event_marker) == 24][0] # first vicon recorded frame is 24
+    # marker_time = event_time[np.array(event_marker) == 24][0] # first vicon recorded frame is 24
+    marker_time = event_time[np.array(event_marker) == 1][0] # for bohr_data_recording_0910
     '''----------------------------------------------------'''
 
     # write into
@@ -309,33 +310,33 @@ def run(root_dir, map_path, output_dir):
 
 
     # add Vicon data
-    
-    vm = [i for i in bhv_data.segments 
-        if i.name=='Vicon motion'][0].irregularlysampledsignals[0]
+    if 'Vicon motion' in [i.name for i in bhv_data.segments]:
+        vm = [i for i in bhv_data.segments 
+            if i.name=='Vicon motion'][0].irregularlysampledsignals[0]
 
-    vm_time = vm.times.rescale(pq.s).magnitude
+        vm_time = vm.times.rescale(pq.s).magnitude
 
-    if len(vm.times)>0:
-        
-        '''---Align Vicon Motion data time to aligned behavioral data time---'''
-        vicon_start_time = vm_time[0]
-        marker_vicon_difference = marker_time - vicon_start_time
-        vm_time = vm_time + marker_vicon_difference
-        '''------------------------------------------------------------------'''
+        if len(vm.times)>0:
+            
+            '''---Align Vicon Motion data time to aligned behavioral data time---'''
+            vicon_start_time = vm_time[0]
+            marker_vicon_difference = marker_time - vicon_start_time
+            vm_time = vm_time + marker_vicon_difference
+            '''------------------------------------------------------------------'''
 
-        vicon_pos_series = SpatialSeries(
-            name='ViconMotion',
-            data=np.array(vm),
-            unit='mm',
-            reference_frame='Zero-position was set by Vicon before every experiment.\
-                The position was closed to the monkey sitting position',
-            timestamps=vm_time, #vm.times.rescale(pq.s).magnitude,
-            description='Finger position recorded by Vicon Motion System.\
-                The Marker 24 represents the start of recording. \
-                The three columns are x, y, and z positions'
-        )
-        behavior_module.add(vicon_pos_series)
-        del vm, vm_time
+            vicon_pos_series = SpatialSeries(
+                name='ViconMotion',
+                data=np.array(vm),
+                unit='mm',
+                reference_frame='Zero-position was set by Vicon before every experiment.\
+                    The position was closed to the monkey sitting position',
+                timestamps=vm_time, #vm.times.rescale(pq.s).magnitude,
+                description='Finger position recorded by Vicon Motion System.\
+                    The Marker 24 represents the start of recording. \
+                    The three columns are x, y, and z positions'
+            )
+            behavior_module.add(vicon_pos_series)
+            del vm, vm_time
 
     # add object info in each frame
     def unpack_objects(d):
@@ -627,7 +628,7 @@ def run(root_dir, map_path, output_dir):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240927_interception_003', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 
 # parser.add_argument('-mp', '--map_path', 
@@ -637,7 +638,7 @@ parser.add_argument('-mp', '--map_path',
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240927_interception_003/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240920_interception_003/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

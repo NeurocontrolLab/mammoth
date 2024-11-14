@@ -112,12 +112,16 @@ def run(data_dir, output_dir, description_dir):
         start_time = info_time[info_df[(info_df['trial_number']==itrial)&(info_df['status']=='start')].index]
         end_time = info_time[info_df[(info_df['trial_number']==itrial)&(info_df['status']=='end')].index]
         
-        pls3_candidate =  frame_view.loc[(frame_time>start_time)&(frame_time<end_time), 'object3']
+        if 'object3' in frame_view.loc[(frame_time>start_time)&(frame_time<end_time), :].columns:
+            pls3_candidate =  frame_view.loc[(frame_time>start_time)&(frame_time<end_time), 'object3']
 
-        pos0 = [[i['name'], i['pos']] for i in pls3_candidate if (not pd.isna(i))]
-        if len(pos0)>0:
-            pos = [i[1] for i in pos0 if 'feedback' in i[0]][0]
-            pos_ls.append(pos)
+            pos0 = [[i['name'], i['pos']] for i in pls3_candidate if (not pd.isna(i))]
+            if len(pos0)>0:
+                pos = [i[1] for i in pos0 if 'feedback' in i[0]][0]
+                pos_ls.append(pos)
+            
+            else:
+                pos_ls.append(np.nan)
         
         else:
             pos_ls.append(np.nan)
@@ -236,13 +240,13 @@ def run(data_dir, output_dir, description_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_001/formatted_data', 
                     metavar='/the/path/your/nwb/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 parser.add_argument("-s", "--description", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20240925_interception_004_check/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_001/description', 
                     metavar='/the/path/your/descriptive/data/located/in', help='root folder')
 
 args = parser.parse_args()
