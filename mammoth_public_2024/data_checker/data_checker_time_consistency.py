@@ -44,10 +44,10 @@ def run(data_dir, output_dir):
 
     # fix bc-ic mixture
     # Bohr 10/10, 10/14, 10/15, 10/16, 1
-    align = len(ml_event_labels)
+    # align = len(ml_event_labels)
 
-    neural_event_times = neural_event_times[-align::]
-    neural_event_labels = neural_event_labels[-align::]
+    # neural_event_times = neural_event_times[-align::]
+    # neural_event_labels = neural_event_labels[-align::]
 
    
 

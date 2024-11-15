@@ -18,6 +18,8 @@ from sklearn.linear_model import MultiTaskLasso
 from sklearn.model_selection import cross_val_score
 from scipy import signal
 from scipy.ndimage import gaussian_filter
+import json
+import matplotlib.pyplot as plt
 
 def run(data_dir, output_dir, description_dir):
 
@@ -171,59 +173,13 @@ def run(data_dir, output_dir, description_dir):
     print(scores)
 
 
-    #%% data regression
-    time_suc = []
-    for t_i in range(select_is.shape[-1]):
-        X = sliced_is[:,:,t_i].reshape((sliced_is.shape[0],-1))
-        Y = move_direction
-        reg = linear_model.MultiTaskLasso()
-        scores = np.mean(cross_val_score(reg, X, Y, cv=5, scoring='r2', n_jobs=-1))
-        time_suc.append(scores)
-
-    print(time_suc)
-
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
-    with open(os.path.join(output_dir, 'correlation_test_score.txt'), 'a') as file:
+    with open(os.path.join(output_dir, 'correaltion_test_score.txt'), 'w') as file:
         file.write(f'{scores}\n')
-
-
-    #%% data shuffiled slicing
-    shuffled_st_shift = [i.time_shift(diff_time_mean+2*pq.s) for i in st]
-    shuffled_sliced_is = SpikeStatistics.preprocessing('instantaneous_rate', kwargs_list, shuffled_st_shift, **kwargs)
-    shuffled_sliced_is = shuffled_sliced_is[trial_ind,:,5:-5]
-
-    #%% data shuffiled regression
-    shuffled_time_suc = []
-    for t_i in range(sliced_is.shape[-1]):
-        X = shuffled_sliced_is[:,:,t_i].reshape((sliced_is.shape[0],-1))
-        Y = move_direction
-        reg = linear_model.MultiTaskLasso()
-        scores = np.mean(cross_val_score(reg, X, Y, cv=5, scoring='r2',n_jobs=-1))
-        shuffled_time_suc.append(scores)
-
-    import seaborn as sns
-    fig, ax1 = plt.subplots()
-
-    data = {}
-    data["Times"] = list(np.arange(0,30,1))+list(np.arange(0,30,1))
-    data['R^2'] = time_suc + shuffled_time_suc
-    data['Mismatch'] = ['Aligned']*len(time_suc)+['2 sec lag']*len(shuffled_time_suc)
-    sns.lineplot(x="Times", y='R^2',data=data, hue='Mismatch', ax=ax1)
-    sta, mid, end = data["Times"][4], data["Times"][14], data["Times"][24]
-    ax1.set_xticks([4,14,24],['-0.5','0','0.5'],fontsize=15,rotation=45)
-    ax1.set_yticks([0,0.5,1],[0,0.5,1],fontsize=15)
-    ax1.set_ylabel('$R^2$',fontsize=15)
-    ax1.set_xlabel('Times (s)',fontsize=15)
-    ax1.set_xlim([0,29])
-    ax1.set_ylim([-0.2,1])
-        
-    plt.savefig(os.path.join(output_dir, 'sliding_R2.png'), dpi=300, bbox_inches = 'tight')
 
     with open(os.path.join(description_dir, 'qc_summary.json'), "r") as file:
         summary = json.load(file)
 
-        summary['neural correlation R^2 (MO+/-1s)'] = time_suc
+        summary['neural correlation R^2 (MO+/-1s)'] = scores.tolist()
     
     with open(os.path.join(output_dir, 'qc_summary.json'), 'w') as file:
         json.dump(summary, file)

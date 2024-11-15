@@ -31,10 +31,32 @@ def run(data_dir, output_dir):
 
     if neural_event_labels[0]>60000:
         neural_event_labels = np.array(neural_event_labels)-65280
+
+    neural_event_times = neural_event_times[neural_event_labels!=0].rescale(pq.s).magnitude * pq.s
+    neural_event_labels = neural_event_labels[neural_event_labels!=0]
     
     # get events from trial operating system
     ml_event_labels = bhv_data.segments[0].events[0].labels
-    ml_event_times = np.array(bhv_data.segments[0].events[0].times) * pq.s
+    ml_event_times = bhv_data.segments[0].events[0].times.rescale(pq.s).magnitude * pq.s
+
+
+    def remove_outliers(data, factor=1.5):
+            q1 = np.percentile(data, 25)
+            q3 = np.percentile(data, 75)
+            iqr = q3 - q1
+            lower_bound = q1 - (factor * iqr)
+            upper_bound = q3 + (factor * iqr)
+            return data[(data > lower_bound) & (data < upper_bound)]
+
+    # for Bohr 10/10, 10/14, 10/15, 10/16, 10/18
+    # align = len(ml_event_labels) + 100
+    # neural_event_times = neural_event_times[:align]
+    # neural_event_labels = neural_event_labels[:align]
+
+    # for Bohr 10/21
+    # align = len(ml_event_labels) + 100
+    # neural_event_times = neural_event_times[-align:]
+    # neural_event_labels = neural_event_labels[-align:]
 
     # compute distance between two events (time difference)
     li_distance = lambda x, y: 0 if np.abs(x - y)==0 else len(neural_event_labels)
@@ -47,16 +69,10 @@ def run(data_dir, output_dir):
     # a = (len(neural_event_labels)-sum(zero_dir))
     diff_time = ml_event_times[path1[:,0]]-neural_event_times[path1[:,1]]
         
-
-    def remove_outliers(data, factor=1.5):
-        q1 = np.percentile(data, 25)
-        q3 = np.percentile(data, 75)
-        iqr = q3 - q1
-        lower_bound = q1 - (factor * iqr)
-        upper_bound = q3 + (factor * iqr)
-        return data[(data > lower_bound) & (data < upper_bound)]
-    
     diff_time = remove_outliers(diff_time, factor=1.5)
+
+    print(diff_time- np.mean(diff_time))
+
     plt.boxplot(diff_time-np.mean(diff_time))
     # len(diff_time)/len(neural_event_labels)
 
@@ -81,10 +97,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241021_BC2DNDT2_002/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241010_interception_002/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Brain_control/20241021_BC2DNDT2_002/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
