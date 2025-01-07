@@ -13,45 +13,34 @@ import numpy as np
 import argparse
 import quantities as pq
 import matplotlib.pyplot as plt
-from SmartNeo.interface_layer.nwb_interface import NWBInterface
+# from SmartNeo.interface_layer.nwb_interface import NWBInterface
+from pynwb import NWBHDF5IO
 
 
 def run(data_dir, output_dir):
     # load data
-    nwb_saver = NWBInterface()
-    neural_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'neural_data_no_sort.nwb'))
+    filename = os.path.join(data_dir, 'neural_data_no_sort.nwb')
+    neural_data = NWBHDF5IO(filename, mode='r').read()
 
-    nwb_saver = NWBInterface()
-    bhv_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'continuous_behavior.nwb'))
+    filename = os.path.join(data_dir, 'continuous_behavior.nwb')
+    bhv_data = NWBHDF5IO(filename, mode='r').read()
 
     # get events from neural recording system
-    neural_event = [i for i in neural_data.segments if i.name=='RecordingSystemEvent'][0]
-    neural_event_labels = neural_event.events[0].labels
-    neural_event_times = neural_event.events[0].times
+    neural_event_labels = neural_data.processing['ecephys']['RecordingSystemEvents'].data[:]
+    neural_event_times = neural_data.processing['ecephys']['RecordingSystemEvents'].timestamps[:]*pq.s
 
     if neural_event_labels[0]>60000:
         neural_event_labels = np.array(neural_event_labels)-65280
+    elif neural_event_labels[0]<-60000:
+        neural_event_labels = np.array(neural_event_labels)+65280
     
-    neural_event_times = neural_event_times[neural_event_labels!=0].rescale(pq.s).magnitude * pq.s
+    neural_event_times = neural_event_times[neural_event_labels!=0]
     neural_event_labels = neural_event_labels[neural_event_labels!=0]
 
     # get events from trial operating system
-    ml_event_labels0 = bhv_data.segments[0].events[0].labels
-    ml_event_labels = np.array(
-        [json.loads(i)['Marker'] for i in ml_event_labels0 if isinstance(json.loads(i), dict)])
-    marker_idx = [ind for ind, i in enumerate(ml_event_labels0) if isinstance(json.loads(i), dict)]
-    ml_event_times = bhv_data.segments[0].events[0].times[marker_idx].rescale(pq.s).magnitude * pq.s
-
-
-    # fix bc-ic mixture
-    # Bohr 10/10, 10/14, 10/15, 10/16, 1
-    # align = len(ml_event_labels)
-
-    # neural_event_times = neural_event_times[-align::]
-    # neural_event_labels = neural_event_labels[-align::]
-
-   
-
+    ml_event_labels = bhv_data.processing['behavior']['MonkeyLogicEvents'].data[:]
+    ml_event_times = bhv_data.processing['behavior']['MonkeyLogicEvents'].timestamps[:] * pq.s
+    
     # compute distance between two events (time difference)
     li_distance = lambda x, y: 0 if np.abs(x - y)==0 else len(neural_event_labels)
         # manhattan_distance = lambda x, y: np.abs(x - y)
@@ -96,10 +85,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241018_interception_001_check/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241018_interception_001_check/description', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()
