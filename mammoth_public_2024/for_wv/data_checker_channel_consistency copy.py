@@ -40,32 +40,43 @@ def run(data_dir, output_dir, root_dir):
     TCR = units[units['sorter']=='TCR']
     spk = units[units['sorter']=='WaveClus']
 
-    #TODO: correct LFP timestamps
+    t_min = min([min(i) for i in units['spike_times']])
     
+
+    # spk_ls1, spk_ls2 = [], []
+    # for _, j in spk.iterrows():
+    #     spk_ls1.append(int(j['sorting_info'].split()[-1].strip('"')))
+    #     spk_ls2.append(j['chn_id'])
+        
+
     #%% check consistency
     # compare time (pairwise)
     data_list = []
     for _, i in TCR.iterrows():
         for _, j in spk.iterrows():
             data = {}
-            if i['chn_id']==(j['chn_id']):
-                tcr_time = i['spike_times']*pq.s.rescale(pq.ms).magnitude
-                spk_time = j['spike_times']*pq.s.rescale(pq.ms).magnitude
+            if i['chn_id']==int(j['sorting_info'].split()[-1].strip('"')): 
+                tcr_time = (i['spike_times'] - t_min)*pq.s.magnitude*1000
+                spk_time = (j['spike_times'] - t_min)*pq.s.magnitude*1000
                 rescale_time = lambda x: np.where(np.histogram(x,range=[0,np.floor(x[-1])],bins = int(np.floor(x[-1])/1))[0]!=0)[0]
-                chn_per = len(set(rescale_time(tcr_time)) & set(rescale_time(spk_time)))/len(j)
+                chn_per = len(set(rescale_time(tcr_time)) & set(rescale_time(spk_time)))/len(j['spike_times'])
+                # data_list.append((i['chn_id'], j['chn_id'], int(j['sorting_info'].split()[-1].strip('"')), chn_per))
+                
                 data['chn'] = 'unshuffled'
                 data['chn_per'] = chn_per
                 data_list.append(data)
 
+    print(1)
+
     # compare time (shuffled)
     ch_num = len(TCR)
-    for j,ind in zip(kilo.iterrows(), np.random.choice(range(ch_num),ch_num)):
+    for (_, j),ind in zip(spk.iterrows(), np.random.choice(range(ch_num),ch_num)):
         i  = TCR.iloc[ind, :]
         data = {}
-        tcr_time = i['spike_times']*pq.s.rescale(pq.ms).magnitude
-        spk_time = j['spike_times']*pq.s.rescale(pq.ms).magnitude #(j.times.rescale(pq.s) -j.t_start.rescale(pq.s)).magnitude*1000
+        tcr_time = (i['spike_times'] - t_min)*pq.s.magnitude*1000
+        spk_time = (j['spike_times'] - t_min)*pq.s.magnitude*1000 #(j.times.rescale(pq.s) -j.t_start.rescale(pq.s)).magnitude*1000
         rescale_time = lambda x: np.where(np.histogram(x,range=[0,np.floor(x[-1])],bins = int(np.floor(x[-1])/1))[0]!=0)[0]  
-        chn_per = len(set(rescale_time(tcr_time)) & set(rescale_time(spk_time)))/len(j)
+        chn_per = len(set(rescale_time(tcr_time)) & set(rescale_time(spk_time)))/len(j['spike_times'])
         data['chn'] = 'shuffled'
         data['chn_per'] = chn_per
         data_list.append(data)

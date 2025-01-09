@@ -20,13 +20,32 @@ from pynwb import NWBFile, NWBHDF5IO, TimeSeries
 
 TrialError_annotation = {
 0: 'Correct',
-1: 'no fixation',
+1: 'no touch',
 2: 'break touch center before target shows',
 3: 'break touch center before go-signal shows',
 4: 'wrong place of touch center',
-5: 'no target fixation',
+5: 'no target touch',
 6: 'break touch target',
 7: 'wrong place of touch target',
+9: 'false start, reaction time after go-signal too short',
+}
+
+Event_Label = {
+9: 'trial start',
+1: 'center on', 
+2: 'touch center',
+3: 'target on',
+11: 'memory on',
+4: 'go signal',
+5: 'movement onset',
+6: 'touch target',
+7: 'touch wrong',
+8: 'touch right',
+10: 'leave target',
+18: 'trial end',
+24: 'TTL, trigger EMG and Vicon',
+13:	'system frame skip',
+14: 'tbc',
 }
 
 def format_file(root_dir, output_dir):
@@ -103,12 +122,20 @@ def format_file(root_dir, output_dir):
                 bhvdf[key] = bhvdf[key].apply(lambda x: flatten(x))
             else:
                 bhvdf[key] = bhvdf[key].apply(lambda x: arr_to_dict(x))
-    
+
 
     #%% set start time and stop time
+    for i in bhvdf.columns:
+        if 'time' in i.lower():
+            bhvdf[i] = bhvdf[i].apply(lambda x: x*pq.ms.rescale(pq.s).magnitude)
+
+
     for i in bhvdf.index:
-        bhvdf.loc[i, 'start_time'] = (bhvdf.loc[i, 'BehavioralCodes_CodeTimes'][0] + bhvdf.loc[i, 'AbsoluteTrialStartTime'])*pq.ms.rescale(pq.s).magnitude
-        bhvdf.loc[i, 'stop_time'] = (bhvdf.loc[i, 'BehavioralCodes_CodeTimes'][-1] + bhvdf.loc[i, 'AbsoluteTrialStartTime'])*pq.ms.rescale(pq.s).magnitude
+        bhvdf.loc[i, 'start_time'] = (bhvdf.loc[i, 'BehavioralCodes_CodeTimes'][0] + bhvdf.loc[i, 'AbsoluteTrialStartTime'])
+        bhvdf.loc[i, 'stop_time'] = (bhvdf.loc[i, 'BehavioralCodes_CodeTimes'][-1] + bhvdf.loc[i, 'AbsoluteTrialStartTime'])
+
+    bhvdf['TrialError_annotation'] = bhvdf['TrialError'].apply(lambda x: TrialError_annotation[x])
+    
 
     # add events
     event_markers = [i for _, trial in bhvdf.iterrows() for i in trial['BehavioralCodes_CodeNumbers']]
@@ -161,8 +188,17 @@ def format_file(root_dir, output_dir):
     )
     behavior_module.add(behavioral_events)
 
+    behavioral_events2 = TimeSeries(
+        name='MonkeyLogicEvents_Labels',
+        data=[Event_Label[i] for i in event_markers],
+        unit='NA',
+        timestamps = event_times,
+        description='Event labels correspond to event markers'
+    )
+    behavior_module.add(behavioral_events2)
 
-    # add trial info (ignore null columns)           
+
+    # add trial info          
     skip_list = ['start_time', 'stop_time'] 
 
     for key in bhvdf.columns:

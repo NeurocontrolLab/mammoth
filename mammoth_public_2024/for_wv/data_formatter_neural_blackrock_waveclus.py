@@ -121,7 +121,6 @@ def format_file(root_dir, map_path, output_dir, content_list):
     nwbfile = NWBFile( **nwb_dict)
 
     # load probe
-     # Load probe
     probegroup = read_probeinterface(map_path)
 
     probe_info_str = os.path.basename(map_path).split(".")[0]
@@ -160,7 +159,17 @@ def format_file(root_dir, map_path, output_dir, content_list):
 
     # view the electrodes table in a pandas DataFrame
     # nwbfile.electrodes.to_dataframe()
- 
+
+    # define unit columns
+    nwbfile.add_unit_column(name="chn_id", 
+                            description="source channel of unit")
+    nwbfile.add_unit_column(name="sorter", 
+                            description="sorting method")
+    nwbfile.add_unit_column(name="sorting_info", 
+                            description="metadata of sorting results")
+    nwbfile.add_unit_column(name="time_unit", 
+                            description="time scale")
+    
     ecephys_module = nwbfile.create_processing_module(
             name="ecephys", 
             description="processed extracellular electrophysiology data"
@@ -195,20 +204,6 @@ def format_file(root_dir, map_path, output_dir, content_list):
     # InputList = []
     # Template = {}
 
-    #%% define unit columns
-    if len([i for i in content_list if i.lower()=='spike'])>0 or len([i for i in content_list if i.upper()=='TCR'])>0:
-        nwbfile.add_unit_column(name="chn_id", 
-                                description="source channel of unit")
-        nwbfile.add_unit_column(name="sorter", 
-                                description="sorting method")
-        nwbfile.add_unit_column(name="sorting_info", 
-                                description="metadata of sorting results")
-        nwbfile.add_unit_column(name="time_unit", 
-                                description="time scale")
-        nwbfile.add_unit_column(name="start_time", 
-                                description="absolute start time")
-   
-
     #%% convert Spike
     if len([i for i in content_list if i.lower()=='spike'])>0:
        
@@ -227,11 +222,11 @@ def format_file(root_dir, map_path, output_dir, content_list):
         # assemble data
         cluster_id = 0     
         for i in tqdm(sorting_files):
+            shank_ind = int(i.split('_elec')[-1].split('-')[0]) - 1
 
-            shank_ind = str(int(i.split('_elec')[-1].split('-')[0]) - 1)
             chn = i.split('_ele_')[0].split('ch_')[-1]
             elec_chn = i.split('_elec')[-1].split('-')[-1].split('.mat')[0]
-
+           
             # data_path = os.path.join(sorter_output_path, i, 'sorter_output')
             # cluster_info = pd.read_csv(os.path.join(data_path, 'cluster_info.tsv'), sep="\t")
             
@@ -242,7 +237,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
             spike_times = cluster_data[:, 1].squeeze()
             spike_clusters = cluster_data[:, 0].squeeze()
             
-            p = probegroup.probes[int(shank_ind)]
+            p = probegroup.probes[shank_ind]
             
             if len(np.unique(spike_clusters))<1:
                 continue
@@ -303,8 +298,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
                             time_unit='seconds',
                             sorting_info=json.dumps(spiketimes['description']["chn_meta"]),
                             # sorting_info=spiketimes['description']["chn_meta"],
-                            sorter = 'WaveClus',
-                            start_time = spiketimes['t_start'])
+                            sorter = 'WaveClus')
 
 
     #%% convert TCR
@@ -354,8 +348,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
                             electrode_group=ETR_list[int(spiketimes['description']["electrode"])],
                             time_unit='seconds',
                             sorting_info = 'NA',
-                            sorter = 'TCR',
-                            start_time = spiketimes['t_start'])
+                            sorter = 'TCR')
             
         # view the unit table in a pandas DataFrame
         # nwbfile.units.to_dataframe()
@@ -426,7 +419,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
             description="LFP data",
             data=lfp_array,
             electrodes=all_table_region,
-            timestamps=np.array(lfp_timestamp).flatten()
+            timestamps=lfp_timestamp
         )
 
         lfp = LFP(electrical_series=lfp_electrical_series)
@@ -512,7 +505,7 @@ parser.add_argument('-mp', '--map_path',
                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
 
 parser.add_argument('-flag', '--sort_flag', 
-                    default='0')
+                    default='1')
 
 
 args = parser.parse_args()
