@@ -164,9 +164,9 @@ def run(root_dir, map_path, output_dir):
     # add RecordingSystemEvent    
     event_marker_series = TimeSeries(
         name='RecordingSystemEvents',
-        data=neural_data.processing['ecephys']['RecordingSystemEvents'].data,
+        data=neural_data.processing['ecephys']['RecordingSystemEvents'].data[:],
         unit='NA', 
-        timestamps=neural_data.processing['ecephys']['RecordingSystemEvents'].timestamps,
+        timestamps=neural_data.processing['ecephys']['RecordingSystemEvents'].timestamps[:],
         description='Event markers recorded by recording system'
     )
 

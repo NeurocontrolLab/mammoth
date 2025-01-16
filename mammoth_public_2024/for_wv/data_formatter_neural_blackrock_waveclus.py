@@ -290,7 +290,9 @@ def format_file(root_dir, map_path, output_dir, content_list):
                 # ind = np.where(cluster_info.cluster_id==clu)[0][0]
                 # ci = cluster_info.iloc[ind].to_dict()
                 st_in_sec = spike_times[spike_clusters==clu] # spiketrains in ms
-                st = (st_in_sec/1e3*30*1e3).astype(int)
+
+                sampling_rate = 30000
+                st = (st_in_sec/1e3*sampling_rate).astype(int) # frame
 
                 # choose 24 sampling points before and 40 after, sampling rate = 30k Hz
                 # => [-0.5ms, +1 ms], referring to WaveClus
@@ -320,14 +322,13 @@ def format_file(root_dir, map_path, output_dir, content_list):
                                     'electrode': float(shank_ind),
                                     'annotations': '',
                                     'chn_meta': 'elec_chn %s' % elec_chn}
-                sampling_rate = 30000
                 
                 # maxind = np.argmax(st>=len(timestamp))
                 # if maxind>0:
                 #     ptp_t = timestamp[st[:maxind]]/1e9
                 # else:
                 #     ptp_t = timestamp[st]/1e9
-                ptp_t = timestamp[st]/1e9
+                ptp_t = timestamp[st]/1e9 # sec
 
                 InputData_Spike['clu ' + str(cluster_id)] = {}
                 InputData_Spike['clu ' + str(cluster_id)]['shankid'] = shank_ind
@@ -508,11 +509,11 @@ def format_file(root_dir, map_path, output_dir, content_list):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240529_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240529_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 parser.add_argument('-mp', '--map_path', 
