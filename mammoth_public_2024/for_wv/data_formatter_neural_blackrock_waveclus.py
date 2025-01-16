@@ -175,6 +175,50 @@ def format_file(root_dir, map_path, output_dir, content_list):
             description="processed extracellular electrophysiology data"
         )
     
+    #%% convert RecordingSystemEvent
+    walk_file = [j for j in os.walk(root_dir)]
+
+    for f_l in walk_file:
+        rec_name = [f_n for f_n in f_l[2] if ('.nev' in f_n) and ('NSP' in f_n)]
+        if len(rec_name) !=0:
+            break
+    datafile = os.path.join(f_l[0], rec_name[0])
+
+    nev_file = brpylib.NevFile(str(datafile))
+
+    # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
+    nsp_data = nev_file.getdata()
+
+    # Close the nsx file now that all data is out
+    nev_file.close()
+
+    ptp_t = np.array(nsp_data['digital_events']['TimeStamps'])/1e9
+    global sys_start_time
+    sys_start_time = ptp_t[0]
+    
+    # add Recording System Event
+    event_label = list(np.array(nsp_data['digital_events']['UnparsedData']).astype('float'))
+    event_label = np.array(event_label)
+    if event_label[0]>60000:
+        event_label = event_label-65280
+
+    event_times = ptp_t*pq.s
+    event_times = event_times.rescale(pq.s).magnitude
+    
+    event_times = event_times[event_label!=0]
+    event_label = event_label[event_label!=0]
+
+    event_marker_series = TimeSeries(
+        name='RecordingSystemEvents',
+        data=event_label,
+        unit='NA', 
+        timestamps=event_times.flatten(),
+        description='Event markers recorded by recording system'
+    )
+
+    ecephys_module.add(event_marker_series)
+    
+    #%% load .ns6 data
     # get raw data path
     try:
         walk_file = [j for j in os.walk(root_dir)]
@@ -245,11 +289,14 @@ def format_file(root_dir, map_path, output_dir, content_list):
             for clu in np.unique(spike_clusters):
                 # ind = np.where(cluster_info.cluster_id==clu)[0][0]
                 # ci = cluster_info.iloc[ind].to_dict()
-                st = spike_times[spike_clusters==clu].astype(int)
+                st_in_sec = spike_times[spike_clusters==clu] # spiketrains in ms
+                st = (st_in_sec/1e3*30*1e3).astype(int)
+
                 # choose 24 sampling points before and 40 after, sampling rate = 30k Hz
                 # => [-0.5ms, +1 ms], referring to WaveClus
                 swi = [st-24+i for i in range(64)]  
                 bch = int(chn)
+                # bch = int(elec_chn)
                 assert len(np.where(p.device_channel_indices==int(chn)))==1
                 
                 # mean_waveform = whitened_data[:,ci['ch']][swi].squeeze().mean(1).astype(float)
@@ -259,6 +306,9 @@ def format_file(root_dir, map_path, output_dir, content_list):
                     mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
                 except:
                     swi = [i[:-1] for i in swi]
+                    # maxind = min([np.argmax(i>=len(data)) for i in swi])
+                    # maxind = maxind if maxind>0 else -1
+                    # swi = [i[:maxind] for i in swi]
                     mean_waveform = f_ch[swi].squeeze().mean(1).astype(float)
 
                 # mean_waveform = data[swi,bch].squeeze().mean(1).astype(float)
@@ -272,7 +322,13 @@ def format_file(root_dir, map_path, output_dir, content_list):
                                     'chn_meta': 'elec_chn %s' % elec_chn}
                 sampling_rate = 30000
                 
+                # maxind = np.argmax(st>=len(timestamp))
+                # if maxind>0:
+                #     ptp_t = timestamp[st[:maxind]]/1e9
+                # else:
+                #     ptp_t = timestamp[st]/1e9
                 ptp_t = timestamp[st]/1e9
+
                 InputData_Spike['clu ' + str(cluster_id)] = {}
                 InputData_Spike['clu ' + str(cluster_id)]['shankid'] = shank_ind
                 InputData_Spike['clu '  + str(cluster_id)]['chn'] = str(chn)
@@ -425,48 +481,6 @@ def format_file(root_dir, map_path, output_dir, content_list):
         lfp = LFP(electrical_series=lfp_electrical_series)
 
         ecephys_module.add(lfp)
-
-
-    #%% convert RecordingSystemEvent
-    walk_file = [j for j in os.walk(root_dir)]
-
-    for f_l in walk_file:
-        rec_name = [f_n for f_n in f_l[2] if ('.nev' in f_n) and ('NSP' in f_n)]
-        if len(rec_name) !=0:
-            break
-    datafile = os.path.join(f_l[0], rec_name[0])
-
-    nev_file = brpylib.NevFile(str(datafile))
-
-    # Extract data - note: data will be returned based on *SORTED* elec_ids, see cont_data['elec_ids']
-    nsp_data = nev_file.getdata()
-
-    # Close the nsx file now that all data is out
-    nev_file.close()
-
-    ptp_t = np.array(nsp_data['digital_events']['TimeStamps'])/1e9
-    
-    # add Recording System Event
-    event_label = list(np.array(nsp_data['digital_events']['UnparsedData']).astype('float'))
-    event_label = np.array(event_label)
-    if event_label[0]>60000:
-        event_label = event_label-65280
-
-    event_times = ptp_t*pq.s
-    event_times = event_times.rescale(pq.s).magnitude
-    
-    event_times = event_times[event_label!=0]
-    event_label = event_label[event_label!=0]
-
-    event_marker_series = TimeSeries(
-        name='RecordingSystemEvents',
-        data=event_label,
-        unit='NA', 
-        timestamps=event_times.flatten(),
-        description='Event markers recorded by recording system'
-    )
-
-    ecephys_module.add(event_marker_series)
     
 
     #%% Writing standard NWB file

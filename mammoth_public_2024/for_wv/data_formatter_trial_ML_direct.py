@@ -124,7 +124,7 @@ def format_file(root_dir, output_dir):
                 bhvdf[key] = bhvdf[key].apply(lambda x: arr_to_dict(x))
 
 
-    #%% set start time and stop time
+    #%% set time unit
     for i in bhvdf.columns:
         if 'time' in i.lower():
             bhvdf[i] = bhvdf[i].apply(lambda x: x*pq.ms.rescale(pq.s).magnitude)
@@ -140,7 +140,7 @@ def format_file(root_dir, output_dir):
     # add events
     event_markers = [i for _, trial in bhvdf.iterrows() for i in trial['BehavioralCodes_CodeNumbers']]
     event_times = [i+trial['AbsoluteTrialStartTime'] for _, trial in bhvdf.iterrows() for i in trial['BehavioralCodes_CodeTimes']]
-    event_times = np.array(event_times)*pq.ms.rescale(pq.s).magnitude
+    event_times = np.array(event_times) # *pq.ms.rescale(pq.s).magnitude
 
 
     #%% convert elemental array to list and then string
@@ -159,6 +159,26 @@ def format_file(root_dir, output_dir):
         if isinstance(bhvdf[key][0], (np.ndarray, dict)):  
             bhvdf[key] = bhvdf[key].apply(lambda x: json.dumps(convert_to_list(x))) 
     
+
+    # unify shape
+    ucol = []
+    for col in bhvdf.columns:
+        if bhvdf[col].apply(lambda x: isinstance(x, (list, np.ndarray))).any():
+            ucol.append(col)
+    
+    def unify_column_to_list(x):
+        if isinstance(x, list):
+            return x
+        elif isinstance(x, (float, int)):
+            return [x]
+        elif isinstance(x, np.ndarray):
+            return x.tolist()
+        else:
+            return []
+
+    for col in ucol:
+        bhvdf[col] = bhvdf[col].apply(lambda x: json.dumps(unify_column_to_list(x)))
+
 
     #%% create an NWB file
     nwbfile = NWBFile(
@@ -227,8 +247,27 @@ def format_file(root_dir, output_dir):
 
     with NWBHDF5IO(os.path.join(output_dir, "continuous_behavior.nwb"), "w") as io:
         io.write(nwbfile)
-        
-  
+
+# df = nwbfile.trials.to_dataframe() 
+# for col in df.columns:
+#     print(f"Column: {col}")
+#     print(df[col].apply(type).value_counts())
+#     print("-" * 50)
+
+# for col in df.columns:
+#     if df[col].apply(lambda x: isinstance(x, (list, np.ndarray))).any():
+#         print(f"Column: {col}")
+#         print(df[col].apply(lambda x: np.shape(x) if isinstance(x, (list, np.ndarray)) else None).value_counts())
+#         print("-" * 50)
+
+# for col in df.columns:
+#     try:
+#         df[[col]].to_hdf(os.path.join(output_dir, 'test.h5'), key='test', mode='w')
+#         print(f"Column {col}: OK")
+#     except Exception as e:
+#         print(f"Column {col}: Error - {e}")
+
+
 #%% parse the input arguments
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-r", "--root", type=str,

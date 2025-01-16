@@ -9,15 +9,15 @@ Created on Mon Sep 23 10:02:11 2024
 #reference: https://pynwb.readthedocs.io/en/stable/tutorials/domain/ecephys.html#sphx-glr-tutorials-domain-ecephys-py
 
 import os
-import copy
-import json
+# import copy
+# import json
 import numpy as np
-import pandas as pd
+# import pandas as pd
 import argparse
-import quantities as pq
+# import quantities as pq
 
 from pynwb import NWBHDF5IO, NWBFile, TimeSeries
-from pynwb.behavior import BehavioralEvents,BehavioralTimeSeries,SpatialSeries
+from pynwb.behavior import BehavioralEvents
 from pynwb.core import DynamicTable
 from pynwb.ecephys import LFP, ElectricalSeries
 
@@ -151,9 +151,9 @@ def run(root_dir, map_path, output_dir):
     lfp_electrical_series = ElectricalSeries(
         name="LFP",
         description="LFP data",
-        data=neural_data.processing['ecephys']['LFP']['LFP'].data,
+        data=np.expand_dims(neural_data.processing['ecephys']['LFP']['LFP'].data[:], axis=0),
         electrodes=all_table_region,
-        timestamps=neural_data.processing['ecephys']['LFP']['LFP'].timestamps
+        timestamps=neural_data.processing['ecephys']['LFP']['LFP'].timestamps[:]
     )
 
     lfp = LFP(electrical_series=lfp_electrical_series)
@@ -276,7 +276,7 @@ def run(root_dir, map_path, output_dir):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240528_Interception_001', 
                     metavar='/the/path/your/data/located/in', help='root folder')
 
 parser.add_argument('-mp', '--map_path', 
@@ -286,7 +286,7 @@ parser.add_argument('-mp', '--map_path',
 #                     default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Bohr_Utah_96x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240528_Interception_001/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

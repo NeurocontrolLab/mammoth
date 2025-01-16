@@ -201,13 +201,13 @@ def run(data_dir, output_dir, description_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240528_Interception_001/formatted_data', 
                     metavar='/the/path/your/nwb/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240528_Interception_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 parser.add_argument("-s", "--description", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240501_Interception_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240528_Interception_001/description', 
                     metavar='/the/path/your/descriptive/data/located/in', help='root folder')
 
 args = parser.parse_args()
