@@ -271,10 +271,10 @@ def format_file(root_dir, output_dir):
 #%% parse the input arguments
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240602_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Caesar/data_recording/20201021_Interception_001_TestUDP', 
                     metavar='/the/root/path/your/data/located/in', help='root folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240602_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Caesar/data_recording/20201021_Interception_001_TestUDP/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 args = parser.parse_args()
 

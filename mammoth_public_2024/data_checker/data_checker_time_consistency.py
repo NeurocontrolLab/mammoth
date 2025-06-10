@@ -22,7 +22,7 @@ def run(data_dir, output_dir):
     neural_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'neural_data_no_sort.nwb'))
 
     nwb_saver = NWBInterface()
-    bhv_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'continuous_behavior.nwb'))
+    bhv_data = nwb_saver.read_nwb(filename = os.path.join(data_dir, 'trial_behavior.nwb'))
 
     # get events from neural recording system
     neural_event = [i for i in neural_data.segments if i.name=='RecordingSystemEvent'][0]
@@ -96,10 +96,10 @@ def run(data_dir, output_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241018_interception_001_check/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001/formatted_data', 
                     metavar='/the/path/your/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Bohr/Data_recording/20241018_interception_001_check/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2023-A-01/Abel/Data_recording/20240705_centerOut_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 args = parser.parse_args()

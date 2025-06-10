@@ -76,13 +76,29 @@ def format_file(root_dir, map_path, output_dir, content_list):
     
      # %% Set basic info and create NWB file
     root_directory = os.path.join(root_dir, 'bhv')
-    file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and ('meta' in i)][0]
-    assert os.path.exists(os.path.join(root_directory, file_pattern)), "Please define the metadata first!"
-    meta_dict_pd = pd.read_csv(os.path.join(root_directory, file_pattern)).to_dict()
-    meta_dict = {}
-    for i,j in zip(meta_dict_pd['Key'], meta_dict_pd['Value']):
-        meta_dict[meta_dict_pd['Key'][i]] = meta_dict_pd['Value'][j]
+    # file_pattern = [i for i in os.listdir(root_directory) if ('csv' in i) and ('meta' in i)][0]
+    # assert os.path.exists(os.path.join(root_directory, file_pattern)), "Please define the metadata first!"
+    # meta_dict_pd = pd.read_csv(os.path.join(root_directory, file_pattern)).to_dict()
+    # meta_dict = {}
+    # for i,j in zip(meta_dict_pd['Key'], meta_dict_pd['Value']):
+    #     meta_dict[meta_dict_pd['Key'][i]] = meta_dict_pd['Value'][j]
 
+    # metadata default
+    meta_dict = {
+        'Subject/subject_id': 'Caesar',
+        'Subject/age': '',
+        'Subject/species': 'Rehsus monkey',
+        'Subject/sex': 'male',
+        'Subject/description': 'None',
+        'NWB/session_description': '',
+        'NWB/session_start_time': '2020/10/09 09:00',  
+        'NWB/session_number': '',
+        'NWB/lab_name': 'cuilab',
+        'NWB/experimenter': '',
+        'NWB/institution': '',
+        'NWB/related_publications': ''
+    }
+    
     subject_dict = {}
     nwb_dict = {}
     for i in meta_dict:
@@ -110,7 +126,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
                         '%Y/%m/%d %H:%M').replace(tzinfo=ZoneInfo('Asia/Shanghai'))
     nwb_dict['subject'] = subject
     nwb_dict['keywords'] = ["ecephys", "monkey", "motor control"]
-    del nwb_dict['experiment_name']
+    # del nwb_dict['experiment_name']
     if 'task' in nwb_dict.keys():
         del nwb_dict['task']
 
@@ -179,7 +195,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
     walk_file = [j for j in os.walk(root_dir)]
 
     for f_l in walk_file:
-        rec_name = [f_n for f_n in f_l[2] if ('.nev' in f_n) and ('NSP' in f_n)]
+        rec_name = [f_n for f_n in f_l[2] if ('.nev' in f_n) or ('NSP' in f_n)]
         if len(rec_name) !=0:
             break
     datafile = os.path.join(f_l[0], rec_name[0])
@@ -509,15 +525,15 @@ def format_file(root_dir, map_path, output_dir, content_list):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240602_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/double_reach/Caesar/data_recording/20201009_DoubleReach_001_TestUDP', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240602_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/double_reach/Caesar/data_recording/20201009_DoubleReach_001_TestUDP/formatted_data', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Caesar/Caesar_Utah_128x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-flag', '--sort_flag', 
                     default='0')

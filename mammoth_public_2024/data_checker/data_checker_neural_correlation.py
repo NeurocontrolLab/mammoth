@@ -157,8 +157,8 @@ def run(data_dir, output_dir, description_dir):
         kwargs = {
                 # 't_start': Event['Times'][Event['Labels']==5]-1*pq.s+Description['AbsoluteTrialStartTime'],
                 # 't_stop': Event['Times'][Event['Labels']==5]+1*pq.s+Description['AbsoluteTrialStartTime'],
-                't_start': aligned_time*pq.s-1*pq.s,
-                't_stop': aligned_time*pq.s+1*pq.s,
+                't_start': aligned_time*pq.s-0.05*pq.s,
+                't_stop': aligned_time*pq.s+0*pq.s,
                 'aligned_marker':[5],
                 'aligned_marker2':[5],
                 'trial_index': ind}
@@ -171,11 +171,13 @@ def run(data_dir, output_dir, description_dir):
     move_direction = np.array(move_direction)
     kwargs = {
         'kernel' : GaussianKernel(50*pq.ms),
-        'sampling_period' : 50*pq.ms
+        'sampling_period' : 10*pq.ms
     }
 
     # sliced_st = SpikeStatistics.preprocessing('spike_time', kwargs_list, st_shift)
+    sliced_th = SpikeStatistics.preprocessing('time_histogram', kwargs_list, st_shift, binsize=10*pq.ms)
     sliced_is = SpikeStatistics.preprocessing('instantaneous_rate', kwargs_list, st_shift, **kwargs)
+    print(sliced_is.shape)
     trial_ind = trial_ind[trial_ind<sliced_is.shape[0]]
     move_direction = move_direction[0:len(trial_ind)]
     sliced_is = sliced_is[trial_ind,:,5:-5]
@@ -240,13 +242,13 @@ def run(data_dir, output_dir, description_dir):
 
 parser = argparse.ArgumentParser(argument_default=None)
 parser.add_argument("-d", "--data", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240924_Interception_001/formatted_data', 
                     metavar='/the/path/your/nwb/data/located/in', help='data folder')
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240924_Interception_001/description', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 parser.add_argument("-s", "--description", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240925_Interception_001/description', 
+                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Data_recording/20240924_Interception_001/description', 
                     metavar='/the/path/your/descriptive/data/located/in', help='root folder')
 
 args = parser.parse_args()

@@ -236,7 +236,7 @@ def format_file(root_dir, map_path, output_dir, content_list):
     data, timestamp = get_timestamp(raw_dir)
 
     # get sorter_output path
-    sorter_output_path = os.path.join(root_dir, 'sorted_data', 'WaveClus', 'selected')
+    sorter_output_path = os.path.join(root_dir, 'sorted_data', 'tdc')
 
     # set bandpass parameters
     fs = 30000.0
@@ -254,8 +254,8 @@ def format_file(root_dir, map_path, output_dir, content_list):
         # def convert_spike(data, timestamp, sorter_output_path, data_template, probegroup, bandpass_params):
         InputData_Spike = {}
 
-        sorter_output_path = os.path.join(root_dir, 'sorted_data', 'WaveClus', 'selected')
-        sorting_files = [i for i in os.listdir(sorter_output_path) if 'times' in i]
+        sorter_output_path = os.path.join(root_dir, 'sorted_data', 'tdc')
+        sorting_files = [i for i in os.listdir(sorter_output_path)]
 
         # fs, lowcut, highcut = bandpass_params
         # fs = 30000.0
@@ -509,18 +509,18 @@ def format_file(root_dir, map_path, output_dir, content_list):
 parser = argparse.ArgumentParser(argument_default=None)
 
 parser.add_argument("-r", "--root", type=str,
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240602_Interception_001', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Caesar/data_recording/20201021_Interception_001_TestUDP', 
                     metavar='/the/path/your/data/located/in', help='input folder')
 
 parser.add_argument('-o', '--output', type=str, 
-                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Abel/data_recording/20240602_Interception_001/formatted_data', 
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Caesar/data_recording/20201021_Interception_001_TestUDP', 
                     metavar='/the/path/you/want/to/save', help='output folder')
 
 parser.add_argument('-mp', '--map_path', 
-                    default='/AMAX/cuihe_lab/share_rw/Neucyber-NC-2024-A-01/Abel/Abel_Utah_64x4_PMd-M1-S1-A7_BlackRock.json')
+                    default='/AMAX/cuihe_lab/share_rw/CuiLab-Database/interception/Caesar/Caesar_Utah_128x2_PMd-M1_BlackRock.json')
 
 parser.add_argument('-flag', '--sort_flag', 
-                    default='0')
+                    default='1')
 
 
 args = parser.parse_args()
